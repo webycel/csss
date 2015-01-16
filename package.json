@@ -1,0 +1,32 @@
+{
+  "name": "CCSS",
+  "version": "1.0.0",
+  "description": "A tool for clean CSS",
+  "main": "ccss.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webycel/ccss.git"
+  },
+  "author": "Anthony Weber",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/webycel/ccss/issues"
+  },
+  "homepage": "https://github.com/webycel/ccss",
+  "preferGlobal": true,
+  "bin": {
+    "ccss": "ccss"
+  },
+  "readmeFilename": "Readme.md",
+  "engines": {
+    "node": ">= 0.10.x"
+  },
+  "dependencies": {
+    "commander": "^2.6.0",
+    "content-disposition": "^0.5.0",
+    "express": "^4.11.0"
+  }
+}

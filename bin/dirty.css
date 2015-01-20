@@ -1,0 +1,36 @@
+a {
+    color: #000;
+}
+
+.text {
+    font-size: 12px;
+    color: #000;
+}
+
+p {
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.stuff {
+    background-color: #fff;
+}
+.stuff:hover {
+    background-color: #ccc;
+}
+
+@media screen {
+    .stuff:focus {
+        color: #666;
+    }
+}
+
+.text {
+    font-size: 10px;
+    margin-left: 20px;
+}
+
+.logo {
+    width: 10px;
+    height: 10px;
+}

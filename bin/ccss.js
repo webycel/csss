@@ -32,12 +32,7 @@ function selectorsAction(files, options) {
 
         //TODO: check file paths
 
-        var cssContent = getCSSFiles(cssFiles);
-
-        promise.resolve(cssContent).then(function(css) {
-            console.log(css[0]);
-        });
-
+        getCSSFiles(cssFiles);
     }
 
 }
@@ -49,7 +44,7 @@ function selectorsAction(files, options) {
  */
 function getCSSFiles(files) {
 
-    return promise.map(files, function(filename) {
+    var cssPromise = promise.map(files, function(filename) {
 
         if(fs.existsSync(filename)) {
             return fs.readFileAsync(filename, 'utf-8').then(function(contents) {
@@ -59,6 +54,10 @@ function getCSSFiles(files) {
 
         throw new Error('CCSS: could not open ' + path.join(process.cwd(), filename));
 
+    });
+
+    promise.resolve(cssPromise).then(function(css) {
+        console.log(css[0]);
     });
 
 }

@@ -7,7 +7,7 @@ a {
     color: #000;
 }
 
-p {
+p, h1, h2 {
     font-size: 14px;
     margin: 10px 0;
 }
@@ -20,12 +20,20 @@ p {
 }
 
 @media screen {
+    .stuff:hover {
+        color: #666;
+    }
     .stuff:focus {
         color: #666;
     }
 }
+@media (max-device-width: 1024px) {
+    .stuff {
+        background-color: #000;
+    }
+}
 
-.text {
+.text, .paragraph {
     font-size: 10px;
     margin-left: 20px;
 }

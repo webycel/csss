@@ -29,3 +29,7 @@ p {
     width: 20px;
     height: 20px;
 }
+
+.text, .paragraph, .subtext {
+    text-indent: 10;
+}

@@ -5,6 +5,7 @@ var path = require('path'),
     fs = promise.promisifyAll(require('fs')),
     css = require('css'),
     program = require('commander'),
+    colors = require('colors'),
     pkg = require( path.join(__dirname, 'package.json') );
 
 

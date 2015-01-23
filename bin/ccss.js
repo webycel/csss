@@ -108,14 +108,31 @@ function detectDuplicateSelectors(obj) {
             }
         });
 
-        for(var index in selectorArray) {
+        /* remove single selectors */
+        /*(for(var index in selectorArray) {
             if(selectorArray[index].length > 1) {
                 multipleSelectors.push(selectorArray[index]);
             }
-        }
+        }*/
 
-        console.log(multipleSelectors);
+        printMultipleSelectors(obj, selectorArray);
         
     }
 
+}
+
+/*
+    print all multiple selectors on console with info
+ */
+function printMultipleSelectors(css, selectors) {
+    for(var sel in selectors) {
+        if(selectors[sel].length > 1) {
+            console.log('DUPLICATE: ' + sel);
+            for(var i in selectors[sel]) {
+                var info = css.stylesheet.rules[selectors[sel][i]].position;
+                console.log(info.source + ' > line ' + info.start.line);
+            }
+            console.log('');
+        }
+    }
 }

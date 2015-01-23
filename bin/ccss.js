@@ -127,14 +127,24 @@ function detectDuplicateSelectors(obj) {
     print all multiple selectors on console with info
  */
 function printMultipleSelectors(css, selectors) {
+
+    console.log(('CCSS START').rainbow);
+    console.log('');
+    console.log('Looking for muliple selectors in');
+    console.log(inputFiles.toString().replace(',', '\n').blue);
+    console.log('');
+
     for(var sel in selectors) {
         if(selectors[sel].length > 1) {
-            console.log('DUPLICATE: ' + sel.red);
+            console.log(('DUPLICATE: ' + sel).red);
             for(var i in selectors[sel]) {
                 var info = css.stylesheet.rules[selectors[sel][i]].position;
-                console.log(info.source + ' > line ' + info.start.line);
+                console.log('    ' + info.source + ' > line ' + info.start.line);
             }
             console.log('');
         }
     }
+    
+    console.log(('CCSS END').rainbow);
+
 }

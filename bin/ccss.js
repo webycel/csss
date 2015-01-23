@@ -139,7 +139,11 @@ function printMultipleSelectors(css, selectors) {
             console.log(('DUPLICATE: ' + sel).red);
             for(var i in selectors[sel]) {
                 var info = css.stylesheet.rules[selectors[sel][i]].position;
-                console.log('    ' + info.source + ' > line ' + info.start.line);
+                if(inputFiles.length > 1) {
+                    console.log('    ' + info.source + ' > line ' + info.start.line);
+                } else {
+                    console.log('    line ' + info.start.line);
+                }
             }
             console.log('');
         }

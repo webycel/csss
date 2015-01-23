@@ -8,6 +8,7 @@ var path = require('path'),
     colors = require('colors'),
     pkg = require( path.join(__dirname, 'package.json') );
 
+var inputFiles;
 
 /* get command inputs */
 program.version(pkg.version);
@@ -30,12 +31,12 @@ function selectorsAction(files, options) {
 
     if(cssFiles !== null) {
 
-        cssFiles = cssFiles.split(',');
+        inputFiles = cssFiles.split(',');
 
         //TODO: check file paths
 
-        getCSSFiles(cssFiles).then(function(rawCSS) {
-            return parseCss(rawCSS, cssFiles);
+        getCSSFiles(inputFiles).then(function(rawCSS) {
+            return parseCss(rawCSS, inputFiles);
         }).then(detectDuplicateSelectors);
     }
 
@@ -46,9 +47,9 @@ function selectorsAction(files, options) {
 /*
     get css files
  */
-function getCSSFiles(files) {
+function getCSSFiles() {
 
-    var cssPromise = promise.map(files, function(filename) {
+    var cssPromise = promise.map(inputFiles, function(filename) {
 
         if(fs.existsSync(filename)) {
             return fs.readFileAsync(filename, 'utf-8').then(function(contents) {
@@ -67,14 +68,14 @@ function getCSSFiles(files) {
 /*
     parse css from files
  */
-function parseCss(rawCSS, files) {
+function parseCss(rawCSS) {
     if(rawCSS.length > 0) {
         //store first css on object
-        var obj = css.parse(rawCSS[0], { source: files[0] });
+        var obj = css.parse(rawCSS[0], { source: inputFiles[0] });
 
         //parse the remaining css files and merge the rules to the existing obj
         for(var i = 1; i < rawCSS.length; i++) {
-            var o = css.parse(rawCSS[i], { source: files[i] });
+            var o = css.parse(rawCSS[i], { source: inputFiles[i] });
             for(var j = 0; j < o.stylesheet.rules.length; j++) {
                 obj.stylesheet.rules[obj.stylesheet.rules.length] = o.stylesheet.rules[j];
             }
@@ -128,7 +129,7 @@ function detectDuplicateSelectors(obj) {
 function printMultipleSelectors(css, selectors) {
     for(var sel in selectors) {
         if(selectors[sel].length > 1) {
-            console.log('DUPLICATE: ' + sel);
+            console.log('DUPLICATE: ' + sel.red);
             for(var i in selectors[sel]) {
                 var info = css.stylesheet.rules[selectors[sel][i]].position;
                 console.log(info.source + ' > line ' + info.start.line);

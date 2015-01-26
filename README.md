@@ -18,5 +18,5 @@ Options:
 
   -h, --help                            output usage information
   -V, --version                         output the version number
-  -f, --file <file>                     Specify stylesheets to process
+  -f, --files <files>                     Specify stylesheets to process
 ```

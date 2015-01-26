@@ -97,27 +97,43 @@ function detectDuplicateSelectors(obj) {
 
         var rules = obj.stylesheet.rules;
         var selectorArray = {};
-        var multipleSelectors = [];
+        var selectorMediaArray = {};
 
         rules.forEach(function(rule, i) {
+
             if(rule.type === 'rule') {
+
                 rule.selectors.forEach(function(selector) {
                     if(selectorArray[selector] == null) {
                         selectorArray[selector] = [];
                     }
                     selectorArray[selector].push(i);
                 });
+
+            } else if(rule.type === 'media') {
+
+                rule.rules.forEach(function(r) {
+                    r.selectors.forEach(function(selector) {
+                        if(selectorMediaArray[rule.media] == null) {
+                            selectorMediaArray[rule.media] = [];
+                        }
+                        if(selectorMediaArray[rule.media][selector] == null) {
+                            selectorMediaArray[rule.media][selector] = [];
+                        }
+                        selectorMediaArray[rule.media][selector].push(i);
+                    });
+                });
+
             }
+
         });
 
-        /* remove single selectors */
-        /*(for(var index in selectorArray) {
-            if(selectorArray[index].length > 1) {
-                multipleSelectors.push(selectorArray[index]);
-            }
-        }*/
+        //console.log('---');
+        //console.log(selectorArray);
+        //console.log('---');
+        //console.log(selectorMediaArray);
 
-        printMultipleSelectors(obj, selectorArray);
+        printMultipleSelectors(obj, selectorArray, selectorMediaArray);
         
     }
 

@@ -23,9 +23,9 @@
 		"url": "https://github.com/webycel/csss.git"
 	},
 	"preferGlobal": true,
-	"main": "./src/csss.js",
+	"main": "csss",
 	"bin": {
-		"csss": "./src/csss.js"
+		"csss": "./csss.js"
 	},
 	"readmeFilename": "Readme.md",
 	"engines": {

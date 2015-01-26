@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "commander": "^2.6.0",
-    "content-disposition": "^0.5.0",
-    "express": "^4.11.0"
+    "bluebird": "^2.9.1",
+    "css": "^2.1.0",
+    "colors": "^1.0.3"
   }
 }

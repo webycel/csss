@@ -1,33 +1,32 @@
 {
-  "name": "CCSS",
-  "version": "1.0.0",
-  "description": "A tool for clean CSS",
-  "main": "ccss.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/webycel/ccss.git"
-  },
-  "author": "Anthony Weber",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/webycel/ccss/issues"
-  },
-  "homepage": "https://github.com/webycel/ccss",
-  "preferGlobal": true,
-  "bin": {
-    "ccss": "./src/ccss.js"
-  },
-  "readmeFilename": "Readme.md",
-  "engines": {
-    "node": ">= 0.10.x"
-  },
-  "dependencies": {
-    "commander": "^2.6.0",
-    "bluebird": "^2.9.1",
-    "css": "^2.1.0",
-    "colors": "^1.0.3"
-  }
+	"name": "CSSS",
+	"version": "0.0.1",
+	"description": "CSSS is a tool that detects multiple CSS selectors from your stylesheets and it works across multiple files.",
+	"main": "csss.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/webycel/csss.git"
+	},
+	"author": "Anthony Weber",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/webycel/csss/issues"
+	},
+	"homepage": "https://github.com/webycel/csss",
+	"preferGlobal": true,
+	"bin": {
+		"csss": "./bin/csss.js"
+	},
+	"readmeFilename": "Readme.md",
+	"engines": {
+		"node": ">= 0.10.x"
+	},
+	"dependencies": {
+		"commander": "^2.6.0",
+		"css": "^2.1.0",
+		"bluebird": "^2.8.1"
+	}
 }

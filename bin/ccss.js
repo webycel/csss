@@ -128,11 +128,6 @@ function detectDuplicateSelectors(obj) {
 
         });
 
-        //console.log('---');
-        //console.log(selectorArray);
-        //console.log('---');
-        //console.log(selectorMediaArray);
-
         printMultipleSelectors(obj, selectorArray, selectorMediaArray);
         
     }
@@ -142,29 +137,51 @@ function detectDuplicateSelectors(obj) {
 /*
     print all multiple selectors on console with info
  */
-function printMultipleSelectors(css, selectors) {
+function printMultipleSelectors(css, selectors, mediaSelectors) {
 
-    console.log(('CCSS START').rainbow);
+    console.log(('CCSS START').rainbow.inverse);
     console.log('');
-    console.log('Looking for muliple selectors in');
+    console.log(('Looking for muliple selectors in').underline);
     console.log(inputFiles.toString().replace(',', '\n').blue);
     console.log('');
 
+    var rules = css.stylesheet.rules;
+
+    /* print multiple selectors outside media queries */
     for(var sel in selectors) {
         if(selectors[sel].length > 1) {
-            console.log(('DUPLICATE: ' + sel).red);
+            console.log((('DUPLICATE: ').bold + sel).red);
             for(var i in selectors[sel]) {
-                var info = css.stylesheet.rules[selectors[sel][i]].position;
-                if(inputFiles.length > 1) {
-                    console.log('    ' + info.source + ' > line ' + info.start.line);
-                } else {
-                    console.log('    line ' + info.start.line);
-                }
+                printMultipleSelectorsLine( rules[selectors[sel][i]].position );
             }
             console.log('');
         }
     }
     
-    console.log(('CCSS END').rainbow);
+    /* print multiple selectors outside media queries */
+    for(var media in mediaSelectors) {
+        for(var sel in mediaSelectors[media]) {
+            if(mediaSelectors[media][sel].length > 1) {
+                console.log((('DUPLICATE: ').bold + sel).red + (' @media ' + media).blue);
+                for(var i in mediaSelectors[media][sel]) {
+                    printMultipleSelectorsLine( rules[mediaSelectors[media][sel][i]].position );
+                }
+                console.log('');
+            }
+        }
+    }
 
+    console.log(('CCSS END').rainbow.inverse);
+
+}
+
+/*
+    print the single line containing filename and line for a selector
+ */
+function printMultipleSelectorsLine(info) {
+    if(inputFiles.length > 1) {
+        console.log('    ' + info.source + ' > line ' + info.start.line);
+    } else {
+        console.log('    line ' + info.start.line);
+    }  
 }

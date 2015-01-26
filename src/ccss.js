@@ -19,8 +19,6 @@ program
     .option('-f, --files <files>', 'specify css files to process')
     .action(selectorsAction);
 
-program.option('-f, --files <files>', 'specify css files to process');
-
 program.parse(process.argv);
 
 
@@ -43,8 +41,6 @@ function selectorsAction(files, options) {
     }
 
 }
-
-
 
 /*
     get css files

@@ -18,7 +18,7 @@
   "homepage": "https://github.com/webycel/ccss",
   "preferGlobal": true,
   "bin": {
-    "ccss": "./bin/ccss.js"
+    "ccss": "./src/ccss.js"
   },
   "readmeFilename": "Readme.md",
   "engines": {

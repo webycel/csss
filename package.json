@@ -18,7 +18,7 @@
 	"homepage": "https://github.com/webycel/csss",
 	"preferGlobal": true,
 	"bin": {
-		"csss": "./bin/csss.js"
+		"csss": "./src/csss.js"
 	},
 	"readmeFilename": "Readme.md",
 	"engines": {

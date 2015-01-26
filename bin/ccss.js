@@ -16,8 +16,10 @@ program.version(pkg.version);
 program
     .command('selectors [options]')
     .description('detect all duplicate selectors of given array with files')
-    .option('-f, --files [files]', 'Define all css files')
+    .option('-f, --files <files>', 'specify css files to process')
     .action(selectorsAction);
+
+program.option('-f, --files <files>', 'specify css files to process');
 
 program.parse(process.argv);
 

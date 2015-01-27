@@ -114,7 +114,7 @@ function detectDuplicateSelectors(obj) {
 
 			} else if (rule.type === 'media') {
 
-				rule.rules.forEach(function (r) {
+				rule.rules.forEach(function (r, j) {
 					r.selectors.forEach(function (selector) {
 						if (selectorMediaArray[rule.media] == null) {
 							selectorMediaArray[rule.media] = [];
@@ -122,7 +122,10 @@ function detectDuplicateSelectors(obj) {
 						if (selectorMediaArray[rule.media][selector] == null) {
 							selectorMediaArray[rule.media][selector] = [];
 						}
-						selectorMediaArray[rule.media][selector].push(i);
+						selectorMediaArray[rule.media][selector].push({
+							media: i,
+							rule: j
+						});
 					});
 				});
 
@@ -166,7 +169,8 @@ function printMultipleSelectors(css, selectors, mediaSelectors) {
 			if (mediaSelectors[media][sel].length > 1) {
 				console.log((('DUPLICATE: ').bold + sel).red + (' @media ' + media).blue);
 				for (var i in mediaSelectors[media][sel]) {
-					printMultipleSelectorsLine(rules[mediaSelectors[media][sel][i]].position);
+					var pos = mediaSelectors[media][sel][i];
+					printMultipleSelectorsLine(rules[pos.media].rules[pos.rule].position);
 				}
 				console.log('');
 			}

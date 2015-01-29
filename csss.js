@@ -145,12 +145,12 @@ function detectDuplicateSelectors(obj) {
 function printMultipleSelectors(css, selectors, mediaSelectors) {
 
 	console.log(('CSSS START').rainbow.inverse);
-	console.log('');
-	console.log(('Looking for muliple selectors in').underline);
+	console.log(('\n\rLooking for muliple selectors in').underline);
 	console.log(inputFiles.toString().replace(',', '\n').blue);
 	console.log('');
 
 	var rules = css.stylesheet.rules;
+	var counter = 0;
 
 	/* print multiple selectors outside media queries */
 	for (var sel in selectors) {
@@ -158,6 +158,7 @@ function printMultipleSelectors(css, selectors, mediaSelectors) {
 			console.log((('DUPLICATE: ').bold + sel).red);
 			for (var i in selectors[sel]) {
 				printMultipleSelectorsLine(rules[selectors[sel][i]].position);
+				counter++;
 			}
 			console.log('');
 		}
@@ -171,12 +172,13 @@ function printMultipleSelectors(css, selectors, mediaSelectors) {
 				for (var i in mediaSelectors[media][sel]) {
 					var pos = mediaSelectors[media][sel][i];
 					printMultipleSelectorsLine(rules[pos.media].rules[pos.rule].position);
+					counter++;
 				}
-				console.log('');
 			}
 		}
 	}
 
+	console.log(('\n\rDuplicate selectors: ' + counter + '\n\r').yellow);
 	console.log(('CSSS END').rainbow.inverse);
 
 }

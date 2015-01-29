@@ -115,18 +115,20 @@ function detectDuplicateSelectors(obj) {
 			} else if (rule.type === 'media') {
 
 				rule.rules.forEach(function (r, j) {
-					r.selectors.forEach(function (selector) {
-						if (selectorMediaArray[rule.media] == null) {
-							selectorMediaArray[rule.media] = [];
-						}
-						if (selectorMediaArray[rule.media][selector] == null) {
-							selectorMediaArray[rule.media][selector] = [];
-						}
-						selectorMediaArray[rule.media][selector].push({
-							media: i,
-							rule: j
+					if (r.type === 'rule') {
+						r.selectors.forEach(function (selector) {
+							if (selectorMediaArray[rule.media] == null) {
+								selectorMediaArray[rule.media] = [];
+							}
+							if (selectorMediaArray[rule.media][selector] == null) {
+								selectorMediaArray[rule.media][selector] = [];
+							}
+							selectorMediaArray[rule.media][selector].push({
+								media: i,
+								rule: j
+							});
 						});
-					});
+					}
 				});
 
 			}

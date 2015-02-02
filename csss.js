@@ -6,6 +6,7 @@ var path = require('path'),
 	css = require('css'),
 	program = require('commander'),
 	colors = require('colors'),
+	rp = require('request-promise'),
 	pkg = require(path.join(__dirname, 'package.json'));
 
 var inputFiles;
@@ -45,14 +46,30 @@ function selectorsAction(files, options) {
 /*
     get css files
  */
-function getCSSFiles() {
+function getCSSFiles(inputFiles) {
 
 	var cssPromise = promise.map(inputFiles, function (filename) {
 
-		if (fs.existsSync(filename)) {
-			return fs.readFileAsync(filename, 'utf-8').then(function (contents) {
-				return contents;
+
+		if (filename.substr(0, 4) === 'http') {
+
+			var options = {
+				uri: filename,
+				method: 'GET'
+			};
+
+			return rp(options).then(function (content) {
+				return content;
 			});
+
+		} else {
+
+			if (fs.existsSync(filename)) {
+				return fs.readFileAsync(filename, 'utf-8').then(function (contents) {
+					return contents;
+				});
+			}
+
 		}
 
 		throw new Error('could not open ' + path.join(process.cwd(), filename));
@@ -66,7 +83,7 @@ function getCSSFiles() {
 /*
     parse css from files
  */
-function parseCss(rawCSS) {
+function parseCss(rawCSS, inputFiles) {
 	if (rawCSS.length > 0) {
 		//store first css on object
 		var obj = css.parse(rawCSS[0], {

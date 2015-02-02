@@ -35,6 +35,8 @@
 		"commander": "^2.6.0",
 		"css": "^2.1.0",
 		"bluebird": "^2.8.1",
-		"colors": "^1.0.3"
+		"colors": "^1.0.3",
+		"request": "^2.52.0",
+		"request-promise": "^0.3.3"
 	}
 }

@@ -16,10 +16,9 @@ npm install -g csss
 
 ## Usage
 
-<i>Currently only works for local files and not for URLs.</i>
 ```
 Usage: csss [options] <file, ...>
-    e.g. csss selectors -f /path/to/dirty.css,/and/other/messedup.css
+    e.g. csss selectors -f /path/to/dirty.css,/and/other/messedup.css,http://not-clean.com/css/style.css
 
 Options:
 

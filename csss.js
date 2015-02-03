@@ -78,14 +78,19 @@ function getCSSFiles(inputFiles) {
 
 		} else {
 
-			if (path.extname(filename).substr(0, 4) === '.css') {
+			try {
 
 				if (fs.lstatSync(filename).isFile()) {
 
-					if (fs.existsSync(filename)) {
-						return fs.readFileAsync(filename, 'utf-8').then(function (contents) {
-							return contents;
-						});
+					if (path.extname(filename).substr(0, 4) === '.css') {
+						if (fs.existsSync(filename)) {
+							return fs.readFileAsync(filename, 'utf-8').then(function (contents) {
+								return contents;
+							});
+						}
+					} else {
+						inputFiles[index] += ' (invalid css file)';
+						return '';
 					}
 
 				} else if (fs.lstatSync(filename).isDirectory()) {
@@ -105,16 +110,15 @@ function getCSSFiles(inputFiles) {
 					return getCSSFiles(dirFiles);
 
 				}
-			} else {
-				inputFiles[index] += ' (invalid css file)';
-			}
 
-			return '';
+			} catch (e) {
+				inputFiles[index] += ' (invalid css file)';
+				return '';
+			}
 
 		}
 
 		//throw new Error('could not open ' + path.join(process.cwd(), filename));
-
 
 	});
 

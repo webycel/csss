@@ -18,7 +18,7 @@ npm install -g csss
 
 ```
 Usage: csss [options] <file, ...>
-    e.g. csss selectors -f /path/to/dirty.css,/and/other/messedup.css,http://not-clean.com/css/style.css
+    e.g. csss selectors -f /path/to/dirty.css,/messy/css/dir/,http://not-clean.com/css/style.css
 
 Options:
 
@@ -26,3 +26,4 @@ Options:
   -V, --version                         output the version number
   -f, --files <files>                   Specify stylesheets to process
 ```
+You can pass local CSS files, a folder which contains CSS files or URLs.

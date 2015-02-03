@@ -7,6 +7,7 @@ var path = require('path'),
 	program = require('commander'),
 	colors = require('colors'),
 	rp = require('request-promise'),
+	_ = require('underscore'),
 	pkg = require(path.join(__dirname, 'package.json'));
 
 var inputFiles;
@@ -34,22 +35,27 @@ function selectorsAction(files, options) {
 
 		inputFiles = cssFiles.split(',');
 
-		//TODO: check file paths
-
-		getCSSFiles(inputFiles).then(function (rawCSS) {
-			return parseCss(rawCSS, inputFiles);
-		}).then(detectDuplicateSelectors);
+		getCSSFiles(inputFiles)
+			.then(function (rawCSS) {
+				inputFiles = _.flatten(inputFiles);
+				return parseCss(_.flatten(rawCSS));
+			}).then(detectDuplicateSelectors);
 	}
 
 }
+
+
+
+/***************
+DETECT DUPLUCATE SELECTORS
+****************/
 
 /*
     get css files
  */
 function getCSSFiles(inputFiles) {
 
-	var cssPromise = promise.map(inputFiles, function (filename) {
-
+	var cssPromise = promise.map(inputFiles, function (filename, index) {
 
 		if (filename.substr(0, 4) === 'http') {
 
@@ -58,21 +64,57 @@ function getCSSFiles(inputFiles) {
 				method: 'GET'
 			};
 
-			return rp(options).then(function (content) {
-				return content;
-			});
+			if (path.extname(filename).substr(0, 4) === '.css') {
+
+				return rp(options).then(function (content) {
+					return content;
+				});
+
+			} else {
+				inputFiles[index] += ' (invalid css file)';
+			}
+
+			return '';
 
 		} else {
 
-			if (fs.existsSync(filename)) {
-				return fs.readFileAsync(filename, 'utf-8').then(function (contents) {
-					return contents;
-				});
+			if (path.extname(filename).substr(0, 4) === '.css') {
+
+				if (fs.lstatSync(filename).isFile()) {
+
+					if (fs.existsSync(filename)) {
+						return fs.readFileAsync(filename, 'utf-8').then(function (contents) {
+							return contents;
+						});
+					}
+
+				} else if (fs.lstatSync(filename).isDirectory()) {
+
+					var dirFiles = fs.readdirSync(filename);
+
+					for (var i in dirFiles) {
+						if (filename.charAt(filename.length - 1) === '/') {
+							dirFiles[i] = filename + dirFiles[i];
+						} else {
+							dirFiles[i] = filename + '/' + dirFiles[i];
+						}
+					}
+
+					inputFiles[index] = dirFiles;
+
+					return getCSSFiles(dirFiles);
+
+				}
+			} else {
+				inputFiles[index] += ' (invalid css file)';
 			}
+
+			return '';
 
 		}
 
-		throw new Error('could not open ' + path.join(process.cwd(), filename));
+		//throw new Error('could not open ' + path.join(process.cwd(), filename));
+
 
 	});
 
@@ -83,8 +125,10 @@ function getCSSFiles(inputFiles) {
 /*
     parse css from files
  */
-function parseCss(rawCSS, inputFiles) {
+function parseCss(rawCSS) {
+
 	if (rawCSS.length > 0) {
+
 		//store first css on object
 		var obj = css.parse(rawCSS[0], {
 			source: inputFiles[0]
@@ -105,6 +149,7 @@ function parseCss(rawCSS, inputFiles) {
 
 	console.log('Error: nothing to parse :(');
 	return null;
+
 }
 
 /*
@@ -165,7 +210,7 @@ function printMultipleSelectors(css, selectors, mediaSelectors) {
 
 	console.log(('CSSS START').rainbow.inverse);
 	console.log(('\n\rLooking for muliple selectors in').underline);
-	console.log(inputFiles.toString().replace(',', '\n').blue);
+	console.log(inputFiles.toString().replace(/,/g, '\n').blue);
 	console.log('');
 
 	var rules = css.stylesheet.rules;

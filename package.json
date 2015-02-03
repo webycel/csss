@@ -1,6 +1,6 @@
 {
 	"name": "csss",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "CSSS is a tool that detects multiple CSS selectors from your stylesheets and it works across multiple files.",
 	"author": "Anthony Weber",
 	"license": "ISC",
@@ -37,6 +37,7 @@
 		"bluebird": "^2.8.1",
 		"colors": "^1.0.3",
 		"request": "^2.52.0",
+		"underscore": "^1.7.0",
 		"request-promise": "^0.3.3"
 	}
 }

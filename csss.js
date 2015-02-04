@@ -67,7 +67,6 @@ function getCSSFiles(inputFiles) {
 					return getCSSFileFromDir(filename, index);
 				}
 			} catch (e) {
-				inputFiles[index] += ' (invalid css file)';
 				return '';
 			}
 		}
@@ -89,8 +88,6 @@ function getCSSFileFromUrl(filename, index) {
 		return rp(options).then(function (content) {
 			return content;
 		});
-	} else {
-		inputFiles[index] += ' (invalid css file)';
 	}
 	return '';
 }
@@ -102,8 +99,6 @@ function getCSSFileFromPath(filename, index) {
 				return contents;
 			});
 		}
-	} else {
-		inputFiles[index] += ' (invalid css file)';
 	}
 	return '';
 }

@@ -58,72 +58,70 @@ function getCSSFiles(inputFiles) {
 	var cssPromise = promise.map(inputFiles, function (filename, index) {
 
 		if (filename.substr(0, 4) === 'http') {
-
-			var options = {
-				uri: filename,
-				method: 'GET'
-			};
-
-			if (path.extname(filename).substr(0, 4) === '.css') {
-
-				return rp(options).then(function (content) {
-					return content;
-				});
-
-			} else {
-				inputFiles[index] += ' (invalid css file)';
-			}
-
-			return '';
-
+			return getCSSFileFromUrl(filename, index);
 		} else {
-
 			try {
-
 				if (fs.lstatSync(filename).isFile()) {
-
-					if (path.extname(filename).substr(0, 4) === '.css') {
-						if (fs.existsSync(filename)) {
-							return fs.readFileAsync(filename, 'utf-8').then(function (contents) {
-								return contents;
-							});
-						}
-					} else {
-						inputFiles[index] += ' (invalid css file)';
-						return '';
-					}
-
+					return getCSSFileFromPath(filename, index);
 				} else if (fs.lstatSync(filename).isDirectory()) {
-
-					var dirFiles = fs.readdirSync(filename);
-
-					for (var i in dirFiles) {
-						if (filename.charAt(filename.length - 1) === '/') {
-							dirFiles[i] = filename + dirFiles[i];
-						} else {
-							dirFiles[i] = filename + '/' + dirFiles[i];
-						}
-					}
-
-					inputFiles[index] = dirFiles;
-
-					return getCSSFiles(dirFiles);
-
+					return getCSSFileFromDir(filename, index);
 				}
-
 			} catch (e) {
 				inputFiles[index] += ' (invalid css file)';
 				return '';
 			}
-
 		}
-
-		//throw new Error('could not open ' + path.join(process.cwd(), filename));
 
 	});
 
 	return promise.resolve(cssPromise);
 
+}
+
+
+function getCSSFileFromUrl(filename, index) {
+	var options = {
+		uri: filename,
+		method: 'GET'
+	};
+
+	if (path.extname(filename).substr(0, 4) === '.css') {
+		return rp(options).then(function (content) {
+			return content;
+		});
+	} else {
+		inputFiles[index] += ' (invalid css file)';
+	}
+	return '';
+}
+
+function getCSSFileFromPath(filename, index) {
+	if (path.extname(filename).substr(0, 4) === '.css') {
+		if (fs.existsSync(filename)) {
+			return fs.readFileAsync(filename, 'utf-8').then(function (contents) {
+				return contents;
+			});
+		}
+	} else {
+		inputFiles[index] += ' (invalid css file)';
+	}
+	return '';
+}
+
+function getCSSFileFromDir(filename, index) {
+	var dirFiles = fs.readdirSync(filename);
+
+	for (var i in dirFiles) {
+		if (filename.charAt(filename.length - 1) === '/') {
+			dirFiles[i] = filename + dirFiles[i];
+		} else {
+			dirFiles[i] = filename + '/' + dirFiles[i];
+		}
+	}
+
+	inputFiles[index] = dirFiles;
+
+	return getCSSFiles(dirFiles);
 }
 
 /*

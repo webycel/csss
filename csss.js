@@ -168,7 +168,6 @@ function detectDuplicateSelectors(obj) {
 		rules.forEach(function (rule, i) {
 
 			if (rule.type === 'rule') {
-
 				rule.selectors.forEach(function (selector) {
 					if (selectorArray[selector] == null) {
 						selectorArray[selector] = [];
@@ -222,11 +221,19 @@ function printMultipleSelectors(css, selectors, mediaSelectors) {
 	for (var sel in selectors) {
 		if (selectors[sel].length > 1) {
 			console.log((('DUPLICATE: ').bold + sel).red);
+			var declarations = {};
 			for (var i in selectors[sel]) {
+
+				rules[selectors[sel][i]].declarations.forEach(function (prop) {
+					if (declarations[prop.property] == null) {
+						declarations[prop.property] = 0;
+					}
+					declarations[prop.property] ++;
+				});
 				printMultipleSelectorsLine(rules[selectors[sel][i]].position);
 				counter++;
 			}
-			console.log('');
+			printSharingProperties(declarations);
 		}
 	}
 
@@ -235,11 +242,19 @@ function printMultipleSelectors(css, selectors, mediaSelectors) {
 		for (var sel in mediaSelectors[media]) {
 			if (mediaSelectors[media][sel].length > 1) {
 				console.log((('DUPLICATE: ').bold + sel).red + (' @media ' + media).blue);
+				var declarations = {};
 				for (var i in mediaSelectors[media][sel]) {
 					var pos = mediaSelectors[media][sel][i];
+					rules[pos.media].rules[pos.rule].declarations.forEach(function (prop) {
+						if (declarations[prop.property] == null) {
+							declarations[prop.property] = 0;
+						}
+						declarations[prop.property] ++;
+					});
 					printMultipleSelectorsLine(rules[pos.media].rules[pos.rule].position);
 					counter++;
 				}
+				printSharingProperties(declarations);
 			}
 		}
 	}
@@ -247,6 +262,17 @@ function printMultipleSelectors(css, selectors, mediaSelectors) {
 	console.log(('\n\rDuplicate selectors: ' + counter + '\n\r').yellow);
 	console.log(('CSSS END').rainbow.inverse);
 
+}
+
+function printSharingProperties(declarations) {
+	var p = _.without(declarations, 0, 1).length,
+		txt;
+	if (p === 1) {
+		txt = 'property';
+	} else {
+		txt = 'properties';
+	}
+	console.log(('    sharing ' + p + ' ' + txt + '\n').green);
 }
 
 /*

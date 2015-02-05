@@ -1,6 +1,5 @@
 *.DS_Store
 
-img
 css
 node_modules
 npm-debug.log

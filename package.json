@@ -1,43 +1,43 @@
 {
-	"name": "csss",
-	"version": "0.4.0",
-	"description": "CSSS is a tool that detects multiple CSS selectors from your stylesheets and it works across multiple files.",
-	"author": "Anthony Weber",
-	"license": "ISC",
-	"homepage": "https://github.com/webycel/csss",
-	"bugs": {
-		"url": "https://github.com/webycel/csss/issues"
-	},
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"keywords": [
-		"optimize",
-		"optimise",
-		"multiple",
-		"selector",
-		"CSS"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/webycel/csss.git"
-	},
-	"preferGlobal": true,
-	"main": "csss",
-	"bin": {
-		"csss": "./csss.js"
-	},
-	"readmeFilename": "Readme.md",
-	"engines": {
-		"node": ">= 0.10.x"
-	},
-	"dependencies": {
-		"commander": "^2.6.0",
-		"css": "^2.1.0",
-		"bluebird": "^2.8.1",
-		"colors": "^1.0.3",
-		"request": "^2.52.0",
-		"underscore": "^1.7.0",
-		"request-promise": "^0.3.3"
-	}
+  "name": "csss",
+  "version": "0.4.1",
+  "description": "CSSS is a tool that detects multiple CSS selectors from your stylesheets and it works across multiple files.",
+  "author": "Anthony Weber",
+  "license": "ISC",
+  "homepage": "https://github.com/webycel/csss",
+  "bugs": {
+    "url": "https://github.com/webycel/csss/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "optimize",
+    "optimise",
+    "multiple",
+    "selector",
+    "CSS"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webycel/csss.git"
+  },
+  "preferGlobal": true,
+  "main": "csss",
+  "bin": {
+    "csss": "./csss.js"
+  },
+  "readmeFilename": "Readme.md",
+  "engines": {
+    "node": ">= 0.10.x"
+  },
+  "dependencies": {
+    "commander": "^2.6.0",
+    "css": "^2.1.0",
+    "bluebird": "^2.8.1",
+    "colors": "^1.0.3",
+    "request": "^2.52.0",
+    "underscore": "^1.7.0",
+    "request-promise": "^0.3.3"
+  }
 }

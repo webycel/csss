@@ -16,10 +16,8 @@ var inputFiles;
 program.version(pkg.version);
 
 program
-	.command('selectors [options]')
-	.description('detect all duplicate selectors of given array with files')
-	.option('-f, --files <files>', 'specify css files to process')
-	.action(selectorsAction);
+	.usage('[options] <file,...>')
+	.option('-f, --files <files>', 'specify css files to process', selectorsAction);
 
 program.parse(process.argv);
 
@@ -27,9 +25,9 @@ program.parse(process.argv);
 /*
     handle 'selectors' command
  */
-function selectorsAction(files, options) {
+function selectorsAction(files) {
 
-	var cssFiles = options.files || null;
+	var cssFiles = files || null;
 
 	if (cssFiles !== null) {
 
@@ -77,7 +75,9 @@ function getCSSFiles(inputFiles) {
 
 }
 
-
+/*
+    get css files from a URL
+ */
 function getCSSFileFromUrl(filename, index) {
 	var options = {
 		uri: filename,
@@ -92,6 +92,9 @@ function getCSSFileFromUrl(filename, index) {
 	return '';
 }
 
+/*
+    get css files from a local path
+ */
 function getCSSFileFromPath(filename, index) {
 	if (path.extname(filename).substr(0, 4) === '.css') {
 		if (fs.existsSync(filename)) {
@@ -103,6 +106,9 @@ function getCSSFileFromPath(filename, index) {
 	return '';
 }
 
+/*
+    get css files from a lcoal directory
+ */
 function getCSSFileFromDir(filename, index) {
 	var dirFiles = fs.readdirSync(filename);
 
@@ -259,6 +265,9 @@ function printMultipleSelectors(css, selectors, mediaSelectors) {
 
 }
 
+/*
+	print amount of shared properties
+ */
 function printSharingProperties(declarations) {
 	var p = _.without(declarations, 0, 1).length,
 		txt;

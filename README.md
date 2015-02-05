@@ -18,7 +18,7 @@ npm install -g csss
 
 ```
 Usage: csss [options] <file, ...>
-    e.g. csss selectors -f /path/to/dirty.css,/messy/css/dir/,http://not-clean.com/css/style.css
+    e.g. csss -f /path/to/dirty.css,/messy/css/dir/,http://not-clean.com/css/style.css
 
 Options:
 

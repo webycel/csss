@@ -27,3 +27,9 @@ Options:
   -f, --files <files>                   Specify stylesheets to process
 ```
 You can pass local CSS files, a folder which contains CSS files or URLs.
+
+##Results example
+![CSS Shampoo results example](/img/example-results.png?raw=true)
+
+You will get a list with all selectors which appear multiple times in your CSS file(s). The exact lines of the selector is shown and if you were searching through multiple files, you will also get the file name printed.
+You can also see the amount of shared properties of each same selector, which means some selectors have exactly the same properties or are overwriting already existing ones in the file.

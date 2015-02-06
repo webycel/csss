@@ -10,14 +10,18 @@ var path = require('path'),
 	_ = require('underscore'),
 	pkg = require(path.join(__dirname, 'package.json'));
 
-var inputFiles;
+var inputFiles,
+	merge = false;
 
 /* get command inputs */
 program.version(pkg.version);
 
 program
-	.usage('[options] <file,...>')
-	.option('-f, --files <files>', 'specify css files to process', selectorsAction);
+	.option('-m, --merge <newFileName>', 'merge all duplicate selectors into new file');
+
+program
+	.usage('[options]')
+	.option('-f, --files <file,...>', 'specify css files to process', selectorsAction);
 
 program.parse(process.argv);
 
@@ -199,7 +203,12 @@ function detectDuplicateSelectors(obj) {
 
 		});
 
-		printMultipleSelectors(obj, selectorArray, selectorMediaArray);
+		if (program.merge) {
+			//printMultipleSelectors(obj, selectorArray, selectorMediaArray);
+			mergeCSS(obj, selectorArray, selectorMediaArray);
+		} else {
+			printMultipleSelectors(obj, selectorArray, selectorMediaArray);
+		}
 
 	}
 
@@ -208,14 +217,14 @@ function detectDuplicateSelectors(obj) {
 /*
     print all multiple selectors on console with info
  */
-function printMultipleSelectors(css, selectors, mediaSelectors) {
+function printMultipleSelectors(cssObj, selectors, mediaSelectors) {
 
 	console.log(('CSSS START').rainbow.inverse);
 	console.log(('\n\rLooking for muliple selectors in').underline);
 	console.log(inputFiles.toString().replace(/,/g, '\n').blue);
 	console.log('');
 
-	var rules = css.stylesheet.rules;
+	var rules = cssObj.stylesheet.rules;
 	var counter = 0;
 
 	/* print multiple selectors outside media queries */
@@ -266,7 +275,7 @@ function printMultipleSelectors(css, selectors, mediaSelectors) {
 }
 
 /*
-	print amount of shared properties
+    print amount of shared properties
  */
 function printSharingProperties(declarations) {
 	var p = _.without(declarations, 0, 1).length,
@@ -288,4 +297,72 @@ function printMultipleSelectorsLine(info) {
 	} else {
 		console.log('    line ' + info.start.line);
 	}
+}
+
+
+
+/*******
+    MERGE DUPLICATE SELECTORS
+********/
+function mergeCSS(cssObj, selectors, mediaSelectors) {
+
+	var rules = cssObj.stylesheet.rules;
+
+	//console.log(rules);
+	//console.log('----------');
+
+	/* merge multiple selectors outside media queries */
+	_.each(selectors, function (selector) {
+		if (selector.length > 1) {
+			var first = 0;
+			_.each(selector, function (sel, i) {
+				if (i === 0) {
+					first = sel;
+				} else {
+
+					_.each(rules[sel].declarations, function (dec) {
+						_.each(rules[first].declarations, function (fDec) {
+							if (fDec.property === dec.property) {
+								fDec.value = dec.value;
+								if (rules[sel].selectors.length > 1) {
+									//console.log(sel);
+									//rules[sel].selectors = _.without(rules[sel].selectors, sel);
+								} else {
+
+								}
+								console.log(rules[first].selectors);
+								console.log(rules[sel].selectors);
+							}
+						});
+					});
+
+					//_.union(rules[first].declarations, rules[sel].declarations);
+					//rules[first].declarations.push(rules[sel].declarations);
+				}
+				//console.log(rules[first].declarations);
+
+				//console.log(_.union(rules[first].declarations, rules[sel].declarations));
+				console.log('----------');
+
+			});
+		}
+	});
+
+
+
+	//saveMergedFile(cssObj);
+
+}
+
+function saveMergedFile(cssObj) {
+	var newFile = program.merge;
+	var cssString = css.stringify(cssObj);
+
+	fs.writeFile(newFile, cssString, function (error) {
+		if (error) {
+			console.log(error);
+		} else {
+			console.log('saved!');
+		}
+	});
 }

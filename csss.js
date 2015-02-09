@@ -31,7 +31,14 @@ var csss = {
 				.then(function (rawCSS) {
 					inputFiles = _.flatten(inputFiles);
 					return csss.parseCss(_.flatten(rawCSS));
-				}).then(csss.detectDuplicateSelectors);
+				}).then(csss.detectDuplicateSelectors).then(function (response) {
+					if (program.merge) {
+						//csss.printMultipleSelectors(response[0][0], response[0][1], response[0][2]);
+						csss.mergeCSS(response[0][0], response[0][1], response[0][2]).then(csss.saveMergedFile);
+					} else {
+						csss.printMultipleSelectors(response[0][0], response[0][1], response[0][2]);
+					}
+				});
 		}
 
 	},
@@ -154,53 +161,55 @@ var csss = {
 	 */
 	detectDuplicateSelectors: function (obj) {
 
-		if (obj !== null) {
+		var cssPromise = promise.map(inputFiles, function (filename, index) {
 
-			var rules = obj.stylesheet.rules;
-			var selectorArray = {};
-			var selectorMediaArray = {};
+			if (obj !== null) {
 
-			rules.forEach(function (rule, i) {
+				var rules = obj.stylesheet.rules;
+				var selectorArray = {};
+				var selectorMediaArray = {};
 
-				if (rule.type === 'rule') {
-					rule.selectors.forEach(function (selector) {
-						if (selectorArray[selector] == null) {
-							selectorArray[selector] = [];
-						}
-						selectorArray[selector].push(i);
-					});
+				rules.forEach(function (rule, i) {
 
-				} else if (rule.type === 'media') {
+					if (rule.type === 'rule') {
+						rule.selectors.forEach(function (selector) {
+							if (selectorArray[selector] == null) {
+								selectorArray[selector] = [];
+							}
+							selectorArray[selector].push(i);
+						});
 
-					rule.rules.forEach(function (r, j) {
-						if (r.type === 'rule') {
-							r.selectors.forEach(function (selector) {
-								if (selectorMediaArray[rule.media] == null) {
-									selectorMediaArray[rule.media] = [];
-								}
-								if (selectorMediaArray[rule.media][selector] == null) {
-									selectorMediaArray[rule.media][selector] = [];
-								}
-								selectorMediaArray[rule.media][selector].push({
-									media: i,
-									rule: j
+					} else if (rule.type === 'media') {
+
+						rule.rules.forEach(function (r, j) {
+							if (r.type === 'rule') {
+								r.selectors.forEach(function (selector) {
+									if (selectorMediaArray[rule.media] == null) {
+										selectorMediaArray[rule.media] = [];
+									}
+									if (selectorMediaArray[rule.media][selector] == null) {
+										selectorMediaArray[rule.media][selector] = [];
+									}
+									selectorMediaArray[rule.media][selector].push({
+										media: i,
+										rule: j
+									});
 								});
-							});
-						}
-					});
+							}
+						});
 
-				}
+					}
 
-			});
+				});
 
-			if (program.merge) {
-				//csss.printMultipleSelectors(obj, selectorArray, selectorMediaArray);
-				csss.mergeCSS(obj, selectorArray, selectorMediaArray).then(csss.saveMergedFile);
-			} else {
-				csss.printMultipleSelectors(obj, selectorArray, selectorMediaArray);
+				return [obj, selectorArray, selectorMediaArray];
 			}
 
-		}
+			return null;
+
+		});
+
+		return promise.resolve(cssPromise);
 
 	},
 

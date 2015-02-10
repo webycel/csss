@@ -11,7 +11,9 @@ var path = require('path'),
 	pkg = require(path.join(__dirname, 'package.json'));
 
 var inputFiles,
-	merge = false;
+	merge = false,
+	duplicateSelectors = 0,
+	mergedSelectors = 0;
 
 
 var csss = {
@@ -26,6 +28,7 @@ var csss = {
 		if (cssFiles !== null) {
 
 			inputFiles = cssFiles.split(',');
+			duplicateSelectors = 0;
 
 			csss.getCSSFiles(inputFiles)
 				.then(function (rawCSS) {
@@ -218,13 +221,9 @@ var csss = {
 	 */
 	printMultipleSelectors: function (cssObj, selectors, mediaSelectors) {
 
-		console.log(('CSSS START').rainbow.inverse);
-		console.log(('\n\rLooking for muliple selectors in').underline);
-		console.log(inputFiles.toString().replace(/,/g, '\n').blue);
-		console.log('');
+		csss.printHead();
 
 		var rules = cssObj.stylesheet.rules;
-		var counter = 0;
 
 		/* print multiple selectors outside media queries */
 		for (var sel in selectors) {
@@ -240,7 +239,7 @@ var csss = {
 						declarations[prop.property] ++;
 					});
 					csss.printMultipleSelectorsLine(rules[selectors[sel][i]].position);
-					counter++;
+					duplicateSelectors++;
 				}
 				csss.printSharingProperties(declarations);
 			}
@@ -261,15 +260,15 @@ var csss = {
 							declarations[prop.property] ++;
 						});
 						csss.printMultipleSelectorsLine(rules[pos.media].rules[pos.rule].position);
-						counter++;
+						duplicateSelectors++;
 					}
 					csss.printSharingProperties(declarations);
 				}
 			}
 		}
 
-		console.log(('\n\rDuplicate selectors: ' + counter + '\n\r').yellow);
-		console.log(('CSSS END').rainbow.inverse);
+		console.log(('\n\rDuplicate selectors: ' + duplicateSelectors + '\n\r').yellow);
+		csss.printFooter();
 
 	},
 
@@ -298,6 +297,17 @@ var csss = {
 		}
 	},
 
+	printHead: function () {
+		console.log(('CSSS START').rainbow.inverse);
+		console.log(('\n\rLooking for muliple selectors in').underline);
+		console.log(inputFiles.toString().replace(/,/g, '\n').blue);
+		console.log('');
+	},
+
+	printFooter: function () {
+		console.log(('CSSS END').rainbow.inverse);
+	},
+
 
 
 	/*******
@@ -308,6 +318,9 @@ var csss = {
 		var cssPromise = promise.map(inputFiles, function (filename, index) {
 
 			var rules = cssObj.stylesheet.rules;
+			var mergedCSSObj = JSON.parse(JSON.stringify(cssObj)); //ewww! ugly copy
+			var mergePos = [];
+			mergedSelectors = 0;
 
 			/* merge multiple selectors outside media queries */
 			_.each(selectors, function (selector) {
@@ -339,23 +352,20 @@ var csss = {
 
 								//exact the same properties
 								if (_.isEqual(sDec, lDec)) {
-									rules.splice(sel, 1);
+									//mergedCSSObj.stylesheet.rules.splice(sel, 1);
+									mergePos.push(sel);
+									mergedSelectors++;
 								}
 
 							}
-
 							/*
 							_.each(rules[sel].declarations, function (dec) {
 								_.each(rules[last].declarations, function (fDec) {
 
-
 									//console.log(fDec);
 									//console.log(dec);
 
-
 									return;
-
-
 
 									if (fDec.property === dec.property) {
 										fDec.value = dec.value;
@@ -371,13 +381,23 @@ var csss = {
 								});
 							});*/
 
+						} else {
+							if (mergedSelectors > 0) {
+								mergedSelectors++;
+							}
 						}
 
 					});
+					duplicateSelectors += selector.length;
 				}
 			});
 
-			return cssObj;
+			//remove merged selectors from CSS object
+			_.each(mergePos.reverse(), function (v) {
+				mergedCSSObj.stylesheet.rules.splice(v, 1);
+			});
+
+			return mergedCSSObj;
 
 		});
 
@@ -386,7 +406,6 @@ var csss = {
 	},
 
 	saveMergedFile: function (cssObj) {
-
 		var newFile = program.merge;
 		var cssString = css.stringify(cssObj[0]);
 
@@ -394,9 +413,18 @@ var csss = {
 			if (error) {
 				console.log(error);
 			} else {
-				console.log('saved!');
+				csss.printMergeSuccess();
 			}
 		});
+	},
+
+	printMergeSuccess: function () {
+		csss.printHead();
+
+		console.log(('Duplicate selectors: ' + duplicateSelectors).yellow);
+		console.log(('Merged selectors: ' + mergedSelectors + '\n\r').blue);
+
+		csss.printFooter();
 	}
 
 }

@@ -1,5 +1,6 @@
+/* 1 - same selector & same properties */
 .text {
   font-size: 12px;
-  color: red;
-  padding: 20px;
+  color: green;
+  padding: 15px;
 }

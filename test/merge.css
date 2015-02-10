@@ -1,6 +1,11 @@
 /* 1 - same selector & same properties */
+
 .text {
   font-size: 12px;
   color: green;
   padding: 15px;
+}
+
+.title {
+  font-family: Arial;
 }

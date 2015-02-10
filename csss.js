@@ -392,8 +392,13 @@ var csss = {
 				}
 			});
 
+			//order by index desc
+			mergePos = _.sortBy(mergePos, function (num) {
+				return num * -1;
+			});
+
 			//remove merged selectors from CSS object
-			_.each(mergePos.reverse(), function (v) {
+			_.each(mergePos, function (v) {
 				mergedCSSObj.stylesheet.rules.splice(v, 1);
 			});
 

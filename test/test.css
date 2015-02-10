@@ -1,0 +1,27 @@
+/* 1 - same selector & same properties */
+.text {
+  font-size: 10px;
+  color: green;
+  padding: 112px;
+}
+.text {
+  font-size: 12px;
+  color: blue;
+  padding: 220px;
+}
+.title {
+    font-family: Arial;
+}
+.text {
+  font-size: 8px;
+  color: green;
+  padding: 12px;
+}
+.text {
+  font-size: 12px;
+  color: green;
+  padding: 15px;
+}
+.title {
+    font-family: Arial;
+}

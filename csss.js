@@ -225,21 +225,23 @@ var csss = {
 
 		var rules = cssObj.stylesheet.rules,
 			declarations = {},
-			i;
+			i, d, j, sel, media, pos;
 
 		/* print multiple selectors outside media queries */
-		for (var sel in selectors) {
+		for (sel in selectors) {
 			if (selectors[sel].length > 1) {
 				console.log((('DUPLICATE: ').bold + sel).red);
 				declarations = {};
 				for (i in selectors[sel]) {
+					d = rules[selectors[sel][i]].declarations;
 
-					rules[selectors[sel][i]].declarations.forEach(function (prop) {
-						if (declarations[prop.property] == null) {
-							declarations[prop.property] = 0;
+					for (j in d) {
+						if (declarations[d[j].property] == null) {
+							declarations[d[j].property] = 0;
 						}
-						declarations[prop.property] ++;
-					});
+						declarations[d[j].property] ++;
+					}
+
 					csss.printMultipleSelectorsLine(rules[selectors[sel][i]].position);
 					duplicateSelectors++;
 				}
@@ -248,19 +250,22 @@ var csss = {
 		}
 
 		/* print multiple selectors outside media queries */
-		for (var media in mediaSelectors) {
+		for (media in mediaSelectors) {
 			for (sel in mediaSelectors[media]) {
 				if (mediaSelectors[media][sel].length > 1) {
 					console.log((('DUPLICATE: ').bold + sel).red + (' @media ' + media).blue);
 					declarations = {};
 					for (i in mediaSelectors[media][sel]) {
-						var pos = mediaSelectors[media][sel][i];
-						rules[pos.media].rules[pos.rule].declarations.forEach(function (prop) {
-							if (declarations[prop.property] == null) {
-								declarations[prop.property] = 0;
+						pos = mediaSelectors[media][sel][i];
+						d = rules[pos.media].rules[pos.rule].declarations;
+
+						for (j in d) {
+							if (declarations[d[j].property] == null) {
+								declarations[d[j].property] = 0;
 							}
-							declarations[prop.property] ++;
-						});
+							declarations[d[j].property] ++;
+						}
+
 						csss.printMultipleSelectorsLine(rules[pos.media].rules[pos.rule].position);
 						duplicateSelectors++;
 					}

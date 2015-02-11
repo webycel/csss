@@ -427,18 +427,21 @@ var csss = {
 			if (error) {
 				console.log(error);
 			} else {
-				csss.printMergeSuccess();
+				csss.printMergeSuccess(newFile);
 			}
 		});
 	},
 
-	printMergeSuccess: function () {
+	printMergeSuccess: function (file) {
 		csss.printHead();
 
-		console.log(('Duplicate selectors: ' + duplicateSelectors).yellow);
-		console.log(('Merged selectors: ' + mergedSelectors + '\n\r').blue);
+		consoleOutput += (('Duplicate selectors: ' + duplicateSelectors + '\n\r').yellow);
+		consoleOutput += (('Merged selectors: ' + mergedSelectors + '\n\r').blue);
+		consoleOutput += (('Merged CSS was saved in: ' + file + '\n\r\n\r'));
 
 		csss.printFooter();
+
+		console.log(consoleOutput);
 	}
 
 };

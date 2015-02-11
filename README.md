@@ -1,3 +1,5 @@
+[![NPM version](https://img.shields.io/npm/v/csss.svg?style=flat)](https://www.npmjs.com/package/csss)  
+
 # CSS Shampoo
 
 CSSS is a tool that detects multiple CSS selectors from your stylesheets and it works across multiple files.

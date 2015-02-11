@@ -342,32 +342,35 @@ var csss = {
 			mergedSelectors = 0;
 
 			/* merge multiple selectors outside media queries */
-			_.each(selectors, function (selector) {
-				if (selector.length > 1) {
+			for (var selector in selectors) {
+				if (selectors[selector].length > 1) {
+
 					var last, rl, lDec = [];
-					_.each(selector, function (sel, i) {
+					selectors[selector] = _.uniq(selectors[selector]);
+
+					for (var i = 0; i < selectors[selector].length; i++) {
+						var sel = selectors[selector][i];
 
 						if (i === 0) {
-							last = selector[selector.length - 1];
+							last = selectors[selector][selectors[selector].length - 1];
 							rl = rules[last];
 							_.each(rl.declarations, function (d) {
 								lDec.push(d.property);
 							});
 						}
 
-						if (i !== selector.length - 1) {
+						if (i !== selectors[selector].length - 1) {
 
 							//console.log(rules[last]);
 							//console.log(rules[sel]);
 							var rs = rules[sel];
+							var sDec = [];
+							_.each(rs.declarations, function (d) {
+								sDec.push(d.property);
+							});
 
-							//exact the same selector | .text = .text
-							if (rs.selectors.length === 1 && rl.selectors.length === 1 && rs.selectors[0] === rl.selectors[0]) {
-
-								var sDec = [];
-								_.each(rs.declarations, function (d) {
-									sDec.push(d.property);
-								});
+							if (rs.selectors.length === 1 && rl.selectors.length === 1 && selector === rl.selectors[0]) {
+								//exact the same selector | .text = .text
 
 								if (_.isEqual(sDec, lDec)) {
 									//exact the same properties
@@ -385,6 +388,17 @@ var csss = {
 
 								}
 
+							} else if (rs.selectors.length > 1) {
+								//different set of selectors | .text, .title {} / .text {}
+
+								if (_.isEqual(sDec, lDec)) {
+									//exact the same properties
+									if (_.difference(rs.selectors, rl.selectors).length === 0) {
+										removePos.push(sel);
+										mergedSelectors++;
+									}
+								}
+
 							}
 
 						} else {
@@ -393,14 +407,16 @@ var csss = {
 							}
 						}
 
-					});
-					duplicateSelectors += selector.length;
+					}
+
+					duplicateSelectors += selectors[selector].length;
+
 				}
-			});
+			}
 
 			if (removePos.length > 0) {
 				//order by index desc
-				removePos = _.sortBy(removePos, function (num) {
+				removePos = _.sortBy(_.uniq(removePos), function (num) {
 					return num * -1;
 				});
 
@@ -410,7 +426,7 @@ var csss = {
 				});
 			}
 
-			//console.log(mergedCSSObj.stylesheet.rules);
+			console.log(mergedCSSObj.stylesheet.rules);
 			return mergedCSSObj;
 
 		});
@@ -427,7 +443,7 @@ var csss = {
 			if (error) {
 				console.log(error);
 			} else {
-				csss.printMergeSuccess(newFile);
+				console.log(csss.printMergeSuccess(newFile));
 			}
 		});
 	},
@@ -441,7 +457,7 @@ var csss = {
 
 		csss.printFooter();
 
-		console.log(consoleOutput);
+		return consoleOutput;
 	}
 
 };

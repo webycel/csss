@@ -1,29 +1,45 @@
 /* 1 - same selector & same properties */
-
+.r1_text {
+  font-size: 10px;
+  color: green;
+  padding: 112px;
+}
+.r1_text {
+  font-size: 12px;
+  color: blue;
+  padding: 220px;
+}
+.r1_title {
+    font-family: Arial;
+}
+.r1_text {
+  font-size: 8px;
+  color: green;
+  padding: 12px;
+}
 .r1_text {
   font-size: 12px;
   color: green;
   padding: 15px;
 }
-
 .r1_title {
-  font-family: Arial;
+    font-family: Arial;
 }
+
 
 /* 2 - same selector, additional property in first one */
-
 .r2_title {
+  font-size: 10px;
+  color: red;
   text-align: right;
 }
-
 .r2_head {
   text-align: center;
 }
-
 .r2_title {
+  font-size: 8px;
   font-style: italic;
 }
-
 .r2_title {
   font-size: 12px;
   color: blue;
@@ -31,13 +47,11 @@
 }
 
 /* media */
-
 @media screen {
   .m_text {
     font-size: 12px;
     text-align: center;
   }
-
   .m_text {
     font-size: 15px;
     text-align: center;

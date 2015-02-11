@@ -6,7 +6,7 @@ var fs = require('fs'),
 	assert = require('assert'),
 	css = require('css'),
 	csss = require('./../csss.js'),
-	testFiles = ['./test/test.css'],
+	testFiles = ['./test/css/test-merge.css'],
 	mergedCSS, testCSS;
 
 

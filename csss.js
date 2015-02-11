@@ -224,7 +224,8 @@ var csss = {
 	    print all multiple selectors on console with info
 	 */
 	printMultipleSelectors: function (cssObj, selectors, mediaSelectors) {
-		var printPromise = promise.map(inputFiles, function (filename, index) {
+
+		var printPromise = promise.map([1], function (map) {
 
 			csss.printHead();
 

@@ -45,3 +45,25 @@
   color: blue;
   padding: 5px;
 }
+
+/* media */
+@media screen {
+  .m_text {
+    font-size: 12px;
+    text-align: center;
+  }
+  .m_text {
+    font-size: 15px;
+    text-align: center;
+  }
+}
+@media print {
+  .m_text {
+    font-size: 12px;
+    text-align: center;
+  }
+  .m_text {
+    font-size: 15px;
+    text-align: center;
+  }
+}

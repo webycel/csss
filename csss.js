@@ -223,14 +223,16 @@ var csss = {
 
 		csss.printHead();
 
-		var rules = cssObj.stylesheet.rules;
+		var rules = cssObj.stylesheet.rules,
+			declarations = {},
+			i;
 
 		/* print multiple selectors outside media queries */
 		for (var sel in selectors) {
 			if (selectors[sel].length > 1) {
 				console.log((('DUPLICATE: ').bold + sel).red);
-				var declarations = {};
-				for (var i in selectors[sel]) {
+				declarations = {};
+				for (i in selectors[sel]) {
 
 					rules[selectors[sel][i]].declarations.forEach(function (prop) {
 						if (declarations[prop.property] == null) {
@@ -319,7 +321,8 @@ var csss = {
 
 			var rules = cssObj.stylesheet.rules;
 			var mergedCSSObj = JSON.parse(JSON.stringify(cssObj)); //ewww! ugly copy
-			var mergePos = [];
+			var mergedCSSObjRules = mergedCSSObj.stylesheet.rules;
+			var removePos = [];
 			mergedSelectors = 0;
 
 			/* merge multiple selectors outside media queries */
@@ -350,36 +353,23 @@ var csss = {
 									sDec.push(d.property);
 								});
 
-								//exact the same properties
 								if (_.isEqual(sDec, lDec)) {
-									//mergedCSSObj.stylesheet.rules.splice(sel, 1);
-									mergePos.push(sel);
+									//exact the same properties
+									removePos.push(sel);
 									mergedSelectors++;
+								} else {
+									var uniq = _.difference(sDec, lDec);
+									var d = mergedCSSObjRules[sel].declarations;
+
+									for (var j = d.length - 1; j >= 0; j--) {
+										if (!_.contains(uniq, d[j].property)) {
+											d.splice(j, 1);
+										}
+									}
+
 								}
 
 							}
-							/*
-							_.each(rules[sel].declarations, function (dec) {
-								_.each(rules[last].declarations, function (fDec) {
-
-									//console.log(fDec);
-									//console.log(dec);
-
-									return;
-
-									if (fDec.property === dec.property) {
-										fDec.value = dec.value;
-										if (rules[sel].selectors.length > 1) {
-											//console.log(sel);
-											//rules[sel].selectors = _.without(rules[sel].selectors, sel);
-										} else {
-
-										}
-										//console.log(rules[first].selectors);
-										//console.log(rules[sel].selectors);
-									}
-								});
-							});*/
 
 						} else {
 							if (mergedSelectors > 0) {
@@ -392,16 +382,19 @@ var csss = {
 				}
 			});
 
-			//order by index desc
-			mergePos = _.sortBy(mergePos, function (num) {
-				return num * -1;
-			});
+			if (removePos.length > 0) {
+				//order by index desc
+				removePos = _.sortBy(removePos, function (num) {
+					return num * -1;
+				});
 
-			//remove merged selectors from CSS object
-			_.each(mergePos, function (v) {
-				mergedCSSObj.stylesheet.rules.splice(v, 1);
-			});
+				//remove merged selectors from CSS object
+				_.each(removePos, function (v) {
+					mergedCSSObj.stylesheet.rules.splice(v, 1);
+				});
+			}
 
+			//console.log(mergedCSSObj.stylesheet.rules);
 			return mergedCSSObj;
 
 		});
@@ -432,7 +425,7 @@ var csss = {
 		csss.printFooter();
 	}
 
-}
+};
 
 /* get command inputs */
 program.version(pkg.version);

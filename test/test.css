@@ -1,27 +1,47 @@
 /* 1 - same selector & same properties */
-.text {
+.r1_text {
   font-size: 10px;
   color: green;
   padding: 112px;
 }
-.text {
+.r1_text {
   font-size: 12px;
   color: blue;
   padding: 220px;
 }
-.title {
+.r1_title {
     font-family: Arial;
 }
-.text {
+.r1_text {
   font-size: 8px;
   color: green;
   padding: 12px;
 }
-.text {
+.r1_text {
   font-size: 12px;
   color: green;
   padding: 15px;
 }
-.title {
+.r1_title {
     font-family: Arial;
+}
+
+
+/* 2 - same selector, additional property in first one */
+.r2_title {
+  font-size: 10px;
+  color: red;
+  text-align: right;
+}
+.r2_head {
+  text-align: center;
+}
+.r2_title {
+  font-size: 8px;
+  font-style: italic;
+}
+.r2_title {
+  font-size: 12px;
+  color: blue;
+  padding: 5px;
 }

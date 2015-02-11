@@ -1,11 +1,31 @@
 /* 1 - same selector & same properties */
 
-.text {
+.r1_text {
   font-size: 12px;
   color: green;
   padding: 15px;
 }
 
-.title {
+.r1_title {
   font-family: Arial;
+}
+
+/* 2 - same selector, additional property in first one */
+
+.r2_title {
+  text-align: right;
+}
+
+.r2_head {
+  text-align: center;
+}
+
+.r2_title {
+  font-style: italic;
+}
+
+.r2_title {
+  font-size: 12px;
+  color: blue;
+  padding: 5px;
 }

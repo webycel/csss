@@ -388,7 +388,7 @@ var csss = {
 
 								}
 
-							} else if (rs.selectors.length > 1) {
+							} else if (rs.selectors.length > 1 || rl.selectors.length > 1) {
 								/* different set of selectors 
 									.text, .title | .text */
 

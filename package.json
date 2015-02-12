@@ -1,7 +1,7 @@
 {
 	"name": "csss",
-	"version": "0.4.7",
-	"description": "CSSS is a tool that detects multiple CSS selectors from your stylesheets and it works across multiple files.",
+	"version": "0.4.8",
+	"description": "A tool to detect multiple CSS selectors from your stylesheets and it works across multiple files.",
 	"author": "Anthony Weber",
 	"license": "ISC",
 	"homepage": "https://github.com/webycel/csss",

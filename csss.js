@@ -350,6 +350,7 @@ var csss = {
 
 					for (var i = 0; i < selectors[selector].length; i++) {
 						var sel = selectors[selector][i];
+						mergedCSSObjRules[sel].selectors = mergedCSSObjRules[sel].selectors;
 
 						if (i === 0) {
 							last = selectors[selector][selectors[selector].length - 1];
@@ -361,8 +362,6 @@ var csss = {
 
 						if (i !== selectors[selector].length - 1) {
 
-							//console.log(rules[last]);
-							//console.log(rules[sel]);
 							var rs = rules[sel];
 							var sDec = [];
 							_.each(rs.declarations, function (d) {
@@ -370,7 +369,8 @@ var csss = {
 							});
 
 							if (rs.selectors.length === 1 && rl.selectors.length === 1 && selector === rl.selectors[0]) {
-								//exact the same selector | .text = .text
+								/* exact the same selector
+									.text = .text */
 
 								if (_.isEqual(sDec, lDec)) {
 									//exact the same properties
@@ -389,13 +389,19 @@ var csss = {
 								}
 
 							} else if (rs.selectors.length > 1) {
-								//different set of selectors | .text, .title {} / .text {}
+								/* different set of selectors 
+									.text, .title | .text */
 
 								if (_.isEqual(sDec, lDec)) {
 									//exact the same properties
+
 									if (_.difference(rs.selectors, rl.selectors).length === 0) {
+										/* same set of selectors
+											.text, .title | .text, .title */
 										removePos.push(sel);
 										mergedSelectors++;
+									} else {
+										mergedCSSObjRules[sel].selectors = _.difference(mergedCSSObjRules[sel].selectors, mergedCSSObjRules[last].selectors);
 									}
 								}
 
@@ -426,7 +432,7 @@ var csss = {
 				});
 			}
 
-			console.log(mergedCSSObj.stylesheet.rules);
+			//console.log(mergedCSSObj.stylesheet.rules);
 			return mergedCSSObj;
 
 		});

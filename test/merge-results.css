@@ -30,6 +30,16 @@
   padding: 5px;
 }
 
+/* 3 - same set of selectors, and same properties */
+
+.r3_title, 
+.r3_head, 
+.r3title {
+  font-size: 10px;
+  color: red;
+  text-align: right;
+}
+
 /* media */
 
 @media screen {

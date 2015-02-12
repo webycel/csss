@@ -1,5 +1,6 @@
 [![NPM version](https://img.shields.io/npm/v/csss.svg?style=flat)](https://www.npmjs.com/package/csss)  
 [![Build Status](https://travis-ci.org/webycel/csss.svg?branch=merging)](https://travis-ci.org/webycel/csss)
+[![Dependency Status](https://img.shields.io/david/webycel/csss.svg?style=flat)](https://david-dm.org/webycel/csss)
 
 # CSS Shampoo
 

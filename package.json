@@ -38,6 +38,6 @@
 		"colors": "^1.0.3",
 		"request": "^2.52.0",
 		"underscore": "^1.7.0",
-		"request-promise": "^0.3.3"
+		"request-promise": "^0.4.0"
 	}
 }

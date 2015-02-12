@@ -401,7 +401,10 @@ var csss = {
 										removePos.push(sel);
 										mergedSelectors++;
 									} else {
+										/* different set of selectors
+											.text, .title, .article | .text, .title */
 										mergedCSSObjRules[sel].selectors = _.difference(mergedCSSObjRules[sel].selectors, mergedCSSObjRules[last].selectors);
+										mergedSelectors++;
 									}
 								}
 

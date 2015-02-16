@@ -371,19 +371,55 @@ var csss = {
 							if (rs.selectors.length === 1 && rl.selectors.length === 1 && selector === rl.selectors[0]) {
 								/* exact the same selector
 									.text = .text */
+								var d = mergedCSSObjRules[sel].declarations,
+									j = d.length - 1,
+									important = [];
 
 								if (_.isEqual(sDec, lDec)) {
-									//exact the same properties
-									removePos.push(sel);
-									mergedSelectors++;
-								} else {
-									var uniq = _.difference(sDec, lDec);
-									var d = mergedCSSObjRules[sel].declarations;
+									/* exact the same properties */
 
-									for (var j = d.length - 1; j >= 0; j--) {
-										if (!_.contains(uniq, d[j].property)) {
+									//check for !important
+									for (; j >= 0; j--) {
+										if (d[j].value.indexOf('!important') >= 0) {
+											important.push(d[j]);
+										}
+									}
+
+									//keep !important and remove remaining duplicate properties
+									if (important.length > 0) {
+										mergedCSSObjRules[sel].declarations = _.intersection(d, important);
+
+										for (var l = important.length - 1; l >= 0; l--) {
+											if (lDec.indexOf(important[l].property) >= 0) {
+												mergedCSSObjRules[last].declarations.splice(l, 1);
+											}
+										}
+
+										mergedSelectors++;
+									}
+
+								} else {
+
+									var uniq = _.difference(sDec, lDec);
+									//check for !important
+									for (; j >= 0; j--) {
+										if (d[j].value.indexOf('!important') >= 0) {
+											important.push(d[j]);
+										} else if (!_.contains(uniq, d[j].property)) {
 											d.splice(j, 1);
 										}
+									}
+
+									//keep !important and remove the duplicates in the last selector
+									if (important.length > 0) {
+
+										for (var l = important.length - 1; l >= 0; l--) {
+											if (lDec.indexOf(important[l].property) >= 0) {
+												mergedCSSObjRules[last].declarations.splice(l, 1);
+											}
+										}
+
+										mergedSelectors++;
 									}
 
 								}
@@ -436,6 +472,10 @@ var csss = {
 			}
 
 			//console.log(mergedCSSObj.stylesheet.rules);
+			_.each(mergedCSSObj.stylesheet.rules, function (r) {
+				console.log('');
+				console.log(r.declarations);
+			});
 			return mergedCSSObj;
 
 		});

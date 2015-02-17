@@ -383,11 +383,7 @@ var csss = {
 									/* exact the same properties */
 
 									//check for !important
-									for (; j >= 0; j--) {
-										if (d[j].value.indexOf('!important') >= 0) {
-											important.push(d[j]);
-										}
-									}
+									important = csss.getImportants(j, d);
 
 									//keep !important and remove remaining duplicate properties
 									if (important.length > 0) {
@@ -443,27 +439,19 @@ var csss = {
 											.text, .title | .text, .title */
 
 										//check for !important
-										for (; j >= 0; j--) {
-											if (d[j].value.indexOf('!important') >= 0) {
-												important.push(d[j]);
-											}
-										}
+										important = csss.getImportants(j, d);
 
 										//keep !important and remove remaining duplicate properties
 										if (important.length > 0) {
 											mergedCSSObjRules[sel].declarations = _.intersection(d, important);
-											//console.log(_.intersection(d, important));
 
 											for (var l = important.length - 1; l >= 0; l--) {
-												console.log(lDecImp);
-												console.log(important[l].property);
 												ldi = lDecImp.indexOf(important[l].property);
 												if (ldi >= 0) {
 													mergedCSSObjRules[last].declarations.splice(ldi, 1);
 													lDecImp.splice(ldi, 1);
 													console.log(mergedCSSObjRules[last].declarations);
 												}
-												//console.log('-----------');
 											}
 
 											mergedSelectors++;
@@ -472,8 +460,6 @@ var csss = {
 											mergedSelectors++;
 										}
 
-										//removePos.push(sel);
-										//mergedSelectors++;
 									} else {
 										/* different set of selectors
 											.text, .title, .article | .text, .title */
@@ -511,8 +497,8 @@ var csss = {
 
 			//console.log(mergedCSSObj.stylesheet.rules);
 			_.each(mergedCSSObj.stylesheet.rules, function (r) {
-				//console.log('');
-				//console.log(r.declarations);
+				console.log('');
+				console.log(r.declarations);
 			});
 			//console.log(mergedCSSObj.stylesheet.rules);
 			return mergedCSSObj;
@@ -521,6 +507,16 @@ var csss = {
 
 		return promise.resolve(cssPromise);
 
+	},
+
+	getImportants: function (j, d) {
+		var i = [];
+		for (; j >= 0; j--) {
+			if (d[j].value.indexOf('!important') >= 0) {
+				i.push(d[j]);
+			}
+		}
+		return i;
 	},
 
 	saveMergedFile: function (cssObj) {

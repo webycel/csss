@@ -345,12 +345,12 @@ var csss = {
 			for (var selector in selectors) {
 				if (selectors[selector].length > 1) {
 
-					var last, rl, lDec = [];
+					var last, rl, lDec = [],
+						lDecImp = [];
 					selectors[selector] = _.uniq(selectors[selector]);
 
 					for (var i = 0; i < selectors[selector].length; i++) {
 						var sel = selectors[selector][i];
-						mergedCSSObjRules[sel].selectors = mergedCSSObjRules[sel].selectors;
 
 						if (i === 0) {
 							last = selectors[selector][selectors[selector].length - 1];
@@ -358,12 +358,19 @@ var csss = {
 							_.each(rl.declarations, function (d) {
 								lDec.push(d.property);
 							});
+							_.each(mergedCSSObjRules[last].declarations, function (d) {
+								lDecImp.push(d.property);
+							});
 						}
 
 						if (i !== selectors[selector].length - 1) {
 
-							var rs = rules[sel];
-							var sDec = [];
+							var rs = rules[sel],
+								sDec = [],
+								important = [],
+								ldi, d = mergedCSSObjRules[sel].declarations,
+								j = d.length - 1;
+
 							_.each(rs.declarations, function (d) {
 								sDec.push(d.property);
 							});
@@ -371,9 +378,6 @@ var csss = {
 							if (rs.selectors.length === 1 && rl.selectors.length === 1 && selector === rl.selectors[0]) {
 								/* exact the same selector
 									.text = .text */
-								var d = mergedCSSObjRules[sel].declarations,
-									j = d.length - 1,
-									important = [];
 
 								if (_.isEqual(sDec, lDec)) {
 									/* exact the same properties */
@@ -437,8 +441,39 @@ var csss = {
 									if (_.difference(rs.selectors, rl.selectors).length === 0) {
 										/* same set of selectors
 											.text, .title | .text, .title */
-										removePos.push(sel);
-										mergedSelectors++;
+
+										//check for !important
+										for (; j >= 0; j--) {
+											if (d[j].value.indexOf('!important') >= 0) {
+												important.push(d[j]);
+											}
+										}
+
+										//keep !important and remove remaining duplicate properties
+										if (important.length > 0) {
+											mergedCSSObjRules[sel].declarations = _.intersection(d, important);
+											//console.log(_.intersection(d, important));
+
+											for (var l = important.length - 1; l >= 0; l--) {
+												console.log(lDecImp);
+												console.log(important[l].property);
+												ldi = lDecImp.indexOf(important[l].property);
+												if (ldi >= 0) {
+													mergedCSSObjRules[last].declarations.splice(ldi, 1);
+													lDecImp.splice(ldi, 1);
+													console.log(mergedCSSObjRules[last].declarations);
+												}
+												//console.log('-----------');
+											}
+
+											mergedSelectors++;
+										} else {
+											removePos.push(sel);
+											mergedSelectors++;
+										}
+
+										//removePos.push(sel);
+										//mergedSelectors++;
 									} else {
 										/* different set of selectors
 											.text, .title, .article | .text, .title */
@@ -474,6 +509,11 @@ var csss = {
 				});
 			}
 
+			//console.log(mergedCSSObj.stylesheet.rules);
+			_.each(mergedCSSObj.stylesheet.rules, function (r) {
+				//console.log('');
+				//console.log(r.declarations);
+			});
 			//console.log(mergedCSSObj.stylesheet.rules);
 			return mergedCSSObj;
 

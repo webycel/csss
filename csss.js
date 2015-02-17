@@ -450,7 +450,6 @@ var csss = {
 												if (ldi >= 0) {
 													mergedCSSObjRules[last].declarations.splice(ldi, 1);
 													lDecImp.splice(ldi, 1);
-													console.log(mergedCSSObjRules[last].declarations);
 												}
 											}
 
@@ -463,8 +462,10 @@ var csss = {
 									} else {
 										/* different set of selectors
 											.text, .title, .article | .text, .title */
-										mergedCSSObjRules[sel].selectors = _.difference(mergedCSSObjRules[sel].selectors, mergedCSSObjRules[last].selectors);
-										mergedSelectors++;
+										if (csss.getImportants(j, d).length === 0) {
+											mergedCSSObjRules[sel].selectors = _.difference(mergedCSSObjRules[sel].selectors, mergedCSSObjRules[last].selectors);
+											mergedSelectors++;
+										}
 									}
 								}
 
@@ -495,12 +496,12 @@ var csss = {
 				});
 			}
 
-			//console.log(mergedCSSObj.stylesheet.rules);
+			/*console.log(mergedCSSObj.stylesheet.rules);
 			_.each(mergedCSSObj.stylesheet.rules, function (r) {
 				console.log('');
 				console.log(r.declarations);
 			});
-			//console.log(mergedCSSObj.stylesheet.rules);
+			*/
 			return mergedCSSObj;
 
 		});

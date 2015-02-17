@@ -396,6 +396,9 @@ var csss = {
 										}
 
 										mergedSelectors++;
+									} else {
+										removePos.push(sel);
+										mergedSelectors++;
 									}
 
 								} else {
@@ -472,10 +475,6 @@ var csss = {
 			}
 
 			//console.log(mergedCSSObj.stylesheet.rules);
-			_.each(mergedCSSObj.stylesheet.rules, function (r) {
-				console.log('');
-				console.log(r.declarations);
-			});
 			return mergedCSSObj;
 
 		});

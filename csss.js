@@ -60,7 +60,6 @@ var csss = {
 	    get css files
 	 */
 	getCSSFiles: function (inputFiles) {
-		console.log('0');
 
 		var cssPromise = promise.map(inputFiles, function (filename, index) {
 
@@ -144,7 +143,9 @@ var csss = {
 		if (rawCSS.length > 0) {
 
 			//store first css on object
-			var obj = css.parse(rawCSS[0], {});
+			var obj = css.parse(rawCSS[0], {
+				source: inputFiles[0]
+			});
 
 			//parse the remaining css files and merge the rules to the existing obj
 			for (var i = 1; i < rawCSS.length; i++) {

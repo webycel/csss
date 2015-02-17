@@ -1,6 +1,6 @@
 {
 	"name": "csss",
-	"version": "0.4.8",
+	"version": "0.4.11",
 	"description": "A tool to detect multiple CSS selectors from your stylesheets and it works across multiple files.",
 	"author": "Anthony Weber",
 	"license": "ISC",

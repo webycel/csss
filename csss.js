@@ -381,7 +381,7 @@ var csss = {
 								/* exact the same selector
 									.text = .text */
 
-								if (_.isEqual(sDec, lDec)) {
+								if (_.isEqual(_.sortBy(sDec), _.sortBy(lDec))) {
 									/* exact the same properties */
 
 									//check for !important
@@ -393,7 +393,11 @@ var csss = {
 
 										for (l = important.length - 1; l >= 0; l--) {
 											if (lDec.indexOf(important[l].property) >= 0) {
-												mergedCSSObjRules[last].declarations.splice(l, 1);
+												if (mergedCSSObjRules[last].declarations[l].value.indexOf('!important') >= 0) {
+													mergedCSSObjRules[sel].declarations.splice(l, 1);
+												} else {
+													mergedCSSObjRules[last].declarations.splice(l, 1);
+												}
 											}
 										}
 
@@ -433,7 +437,7 @@ var csss = {
 								/* set of selectors 
 									.text, .title | .text */
 
-								if (_.isEqual(sDec, lDec)) {
+								if (_.isEqual(_.sortBy(sDec), _.sortBy(lDec))) {
 									//exact the same properties
 
 									if (_.difference(rs.selectors, rl.selectors).length === 0) {

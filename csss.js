@@ -430,7 +430,7 @@ var csss = {
 								}
 
 							} else if (rs.selectors.length > 1 || rl.selectors.length > 1) {
-								/* different set of selectors 
+								/* set of selectors 
 									.text, .title | .text */
 
 								if (_.isEqual(sDec, lDec)) {
@@ -464,8 +464,27 @@ var csss = {
 									} else {
 										/* different set of selectors
 											.text, .title, .article | .text, .title */
-										if (csss.getImportants(j, d).length === 0) {
+
+										important = csss.getImportants(j, d);
+
+										if (important.length === 0) {
+											//no !important in properties
 											mergedCSSObjRules[sel].selectors = _.difference(mergedCSSObjRules[sel].selectors, mergedCSSObjRules[last].selectors);
+											mergedSelectors++;
+										} else {
+											//has !important
+
+											if (mergedCSSObjRules[last].selectors.length === 1) {
+
+												for (l = important.length - 1; l >= 0; l--) {
+													ldi = lDecImp.indexOf(important[l].property);
+													if (ldi >= 0) {
+														mergedCSSObjRules[last].declarations.splice(ldi, 1);
+														lDecImp.splice(ldi, 1);
+													}
+												}
+											}
+
 											mergedSelectors++;
 										}
 									}
@@ -552,8 +571,8 @@ var csss = {
 /* get command inputs */
 program.version(pkg.version);
 
-//program
-//	.option('-m, --merge <newFileName>', 'merge all duplicate selectors into new file (still WIP!)');
+program
+	.option('-m, --merge <newFileName>', 'merge all duplicate selectors into new file (still WIP!)');
 
 program
 	.usage('[options]')

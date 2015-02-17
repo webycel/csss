@@ -60,6 +60,7 @@ var csss = {
 	    get css files
 	 */
 	getCSSFiles: function (inputFiles) {
+		console.log('0');
 
 		var cssPromise = promise.map(inputFiles, function (filename, index) {
 
@@ -130,7 +131,7 @@ var csss = {
 
 		inputFiles[index] = dirFiles;
 
-		return getCSSFiles(dirFiles);
+		return csss.getCSSFiles(dirFiles);
 	},
 
 	/*
@@ -368,7 +369,7 @@ var csss = {
 							var rs = rules[sel],
 								sDec = [],
 								important = [],
-								ldi, d = mergedCSSObjRules[sel].declarations,
+								ldi, l, d = mergedCSSObjRules[sel].declarations,
 								j = d.length - 1;
 
 							_.each(rs.declarations, function (d) {
@@ -389,7 +390,7 @@ var csss = {
 									if (important.length > 0) {
 										mergedCSSObjRules[sel].declarations = _.intersection(d, important);
 
-										for (var l = important.length - 1; l >= 0; l--) {
+										for (l = important.length - 1; l >= 0; l--) {
 											if (lDec.indexOf(important[l].property) >= 0) {
 												mergedCSSObjRules[last].declarations.splice(l, 1);
 											}
@@ -416,7 +417,7 @@ var csss = {
 									//keep !important and remove the duplicates in the last selector
 									if (important.length > 0) {
 
-										for (var l = important.length - 1; l >= 0; l--) {
+										for (l = important.length - 1; l >= 0; l--) {
 											if (lDec.indexOf(important[l].property) >= 0) {
 												mergedCSSObjRules[last].declarations.splice(l, 1);
 											}
@@ -445,7 +446,7 @@ var csss = {
 										if (important.length > 0) {
 											mergedCSSObjRules[sel].declarations = _.intersection(d, important);
 
-											for (var l = important.length - 1; l >= 0; l--) {
+											for (l = important.length - 1; l >= 0; l--) {
 												ldi = lDecImp.indexOf(important[l].property);
 												if (ldi >= 0) {
 													mergedCSSObjRules[last].declarations.splice(ldi, 1);
@@ -550,8 +551,8 @@ var csss = {
 /* get command inputs */
 program.version(pkg.version);
 
-program
-	.option('-m, --merge <newFileName>', 'merge all duplicate selectors into new file (still WIP!)');
+//program
+//	.option('-m, --merge <newFileName>', 'merge all duplicate selectors into new file (still WIP!)');
 
 program
 	.usage('[options]')

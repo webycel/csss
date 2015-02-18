@@ -521,18 +521,24 @@ var csss = {
 				});
 			}
 
-			/*console.log(mergedCSSObj.stylesheet.rules);
-			_.each(mergedCSSObj.stylesheet.rules, function (r) {
-				console.log('');
-				console.log(r.declarations);
-			});
-			*/
-			return mergedCSSObj;
+			return csss.cleanUpMergedCSS(mergedCSSObj);
 
 		});
 
 		return promise.resolve(cssPromise);
 
+	},
+
+	cleanUpMergedCSS: function (obj) {
+		var mr = obj.stylesheet.rules;
+		for (var c = mr.length - 1; c >= 0; c--) {
+			if (mr[c].type === 'rule') {
+				if (mr[c].selectors.length === 0 || mr[c].declarations.length === 0) {
+					mr.splice(c, 1);
+				}
+			}
+		}
+		return obj;
 	},
 
 	getImportants: function (j, d) {

@@ -441,7 +441,6 @@ var csss = {
 							} else if (rs.selectors.length > 1 || rl.selectors.length > 1) {
 								/* set of selectors 
 									.text, .title | .text */
-
 								if (_.isEqual(_.sortBy(sDec), _.sortBy(lDec))) {
 									//exact the same properties
 
@@ -492,10 +491,31 @@ var csss = {
 														lDecImp.splice(ldi, 1);
 													}
 												}
+
 											}
 
 											mergedSelectors++;
 										}
+									}
+								} else {
+									important = csss.getImportants(j, d);
+
+									if (important.length > 0) {
+										if (mergedCSSObjRules[last].selectors.length === 1) {
+
+											for (l = important.length - 1; l >= 0; l--) {
+												ldi = lDecImp.indexOf(important[l].property);
+												if (ldi >= 0) {
+													if (mergedCSSObjRules[last].declarations[l].value.indexOf('!important') < 0) {
+														mergedCSSObjRules[last].declarations.splice(ldi, 1);
+														lDecImp.splice(ldi, 1);
+													}
+												}
+											}
+
+										}
+
+										mergedSelectors++;
 									}
 								}
 

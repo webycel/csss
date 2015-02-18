@@ -40,6 +40,150 @@
   text-align: right;
 }
 
+/* 4 - different set of selectors, and same properties */
+
+.r4_head {
+  font-size: 10px;
+  color: red;
+  text-align: right;
+}
+
+.r4_title {
+  font-size: 10px;
+  color: red;
+  text-align: right;
+}
+
+/* 5 - two selectors in first one, additional property in first one */
+
+.r5_title, 
+.r5_head {
+  font-size: 10px;
+  color: red;
+  text-align: right;
+}
+
+.r5_title {
+  font-size: 10px;
+  color: red;
+}
+
+/* 6 - two selectors in last one, same properties */
+
+.r6_title,
+.r6_head {
+  font-size: 10px;
+  color: red;
+}
+
+/* 7 - several selectors in first one, different properties */
+
+.r7_title,
+.r7_head,
+.r7_text {
+  text-align: right;
+}
+
+.r7_head,
+.r7_text,
+.r7_footer {
+  padding: 15px;
+}
+
+.r7_title {
+  font-size: 10px;
+  color: red;
+}
+
+/* 8 - same selectors, same properties, but one with !important in first */
+
+.r8_text {
+  font-size: 10px !important;
+}
+
+.r8_text {
+  color: blue;
+}
+
+/* 9 - different set of selectors, same properties, but with !important in first */
+
+.r9_text,
+.r9_title {
+  font-size: 10px !important;
+  color: green;
+}
+
+.r9_text {
+  color: blue;
+}
+
+/* 10 - same set of selectors, same properties, but with !important in first */
+
+.r10_text,
+.r10_title {
+  font-size: 10px !important;
+}
+
+.r10_text,
+.r10_title {
+  color: blue;
+}
+
+/* 11 - different set of selectors, a different property, and with !important in first */
+
+.r11_text,
+.r11_title {
+  font-size: 10px !important;
+  color: green;
+  text-align: center;
+}
+
+.r11_text {
+  color: blue;
+  text-align: center;
+}
+
+/* 12 - same selectors, same properties, with same !important properties in both */
+
+.r12_text {
+  font-size: 12px !important;
+  color: blue;
+  text-align: center;
+}
+
+/* 13 - same selectors, same properties, with same !important properties in both */
+
+.r13_text {
+  text-align: center;
+}
+
+.r13_text {
+  font-size: 12px !important;
+  color: blue;
+}
+
+/* 14 - same selectors, same properties, with same !important properties in both */
+
+.r14_text,
+.r14_title {
+  font-size: 10px !important;
+  color: green;
+  text-align: center;
+}
+
+.r14_text {
+  font-size: 12px !important;
+  color: blue;
+}
+
+/* 15 - same selector, same properties, all properties in first are !important */
+
+.r15_text {
+  font-size: 10px !important;
+  color: green !important;
+  text-align: center !important;
+}
+
 /* media */
 
 @media screen {

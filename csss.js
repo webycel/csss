@@ -410,6 +410,7 @@ var csss = {
 								} else {
 
 									var uniq = _.difference(sDec, lDec);
+
 									//check for !important
 									for (; j >= 0; j--) {
 										if (d[j].value.indexOf('!important') >= 0) {
@@ -424,7 +425,11 @@ var csss = {
 
 										for (l = important.length - 1; l >= 0; l--) {
 											if (lDec.indexOf(important[l].property) >= 0) {
-												mergedCSSObjRules[last].declarations.splice(l, 1);
+												if (mergedCSSObjRules[last].declarations[l].value.indexOf('!important') >= 0) {
+													mergedCSSObjRules[sel].declarations.splice(l, 1);
+												} else {
+													mergedCSSObjRules[last].declarations.splice(l, 1);
+												}
 											}
 										}
 

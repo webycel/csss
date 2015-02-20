@@ -9,6 +9,7 @@
 		"url": "https://github.com/webycel/csss/issues"
 	},
 	"scripts": {
+		"start": "node index.js",
 		"test": "mocha"
 	},
 	"keywords": [

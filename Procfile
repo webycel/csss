@@ -1,1 +1,1 @@
-web: node csss.js
+web: csss csss.js

@@ -351,37 +351,40 @@ var csss = {
 
 		var cssPromise = promise.map(inputFiles, function (filename, index) {
 
-			var rules = cssObj.stylesheet.rules;
-			var mergedCSSObj = JSON.parse(JSON.stringify(cssObj)); //ewww! ugly copy
-			var mergedCSSObjRules = mergedCSSObj.stylesheet.rules;
+			var rules = cssObj.stylesheet.rules,
+				mergedCSSObj = JSON.parse(JSON.stringify(cssObj)), //ewww! ugly copy
+				mergedCSSObjRules = mergedCSSObj.stylesheet.rules,
+				resultSelectors, resultMediaSelectors, media, i, j, length, length2, r, removeSelectors = [];
+
 			mergedSelectors = 0;
 
-			//console.log(selectors);
-			//console.log(mediaSelectors);
-
 			/* merge multiple selectors OUTSIDE media queries */
-			var resultSelectors = csss.mergeSelectors(rules, mergedCSSObj, mergedCSSObjRules, selectors, mediaSelectors);
-
-			if (resultSelectors[1].length > 0) {
-				//order by index desc
-				resultSelectors[1] = _.sortBy(_.uniq(resultSelectors[1]), function (num) {
-					return num * -1;
-				});
-
-				//remove merged selectors from CSS object
-				_.each(resultSelectors[1], function (v) {
-					mergedCSSObj.stylesheet.rules.splice(v, 1);
-				});
-			}
+			resultSelectors = csss.mergeSelectors(rules, mergedCSSObj, mergedCSSObjRules, selectors, false);
+			removeSelectors = _.sortBy(_.uniq(resultSelectors[1]));
 
 			/* merge multiple selectors INSIDE media queries */
-			for (var media in mediaSelectors) {
-				//console.log(mediaSelectors[media]);
-				//var resultMediaSelectors = csss.mergeSelectors(rules, mergedCSSObj, mergedCSSObjRules, mediaSelectors[media], mediaSelectors);
-				//console.log(resultMediaSelectors[0]);
+			for (media in mediaSelectors) {
+				resultMediaSelectors = csss.mergeSelectors(rules, mergedCSSObj, mergedCSSObjRules, mediaSelectors[media], true);
+				removeSelectors.push(_.sortBy(_.uniq(resultMediaSelectors[1])));
 			}
 
-			return csss.cleanUpMergedCSS(resultSelectors[0]);
+			//remove duplicate selectors from object
+			length = removeSelectors.length;
+			if (length > 0) {
+				for (i = length - 1; i >= 0; i--) {
+					length2 = removeSelectors[i].length;
+					if (length2 > 0) {
+						for (j = length2 - 1; j >= 0; j--) {
+							r = removeSelectors[i][j];
+							mergedCSSObj.stylesheet.rules[r[0]].rules.splice(r[1], 1);
+						}
+					} else if (typeof length2 === 'undefined') {
+						mergedCSSObj.stylesheet.rules.splice(removeSelectors[i], 1);
+					}
+				}
+			}
+
+			return csss.cleanUpMergedCSS(mergedCSSObj);
 
 		});
 
@@ -389,36 +392,43 @@ var csss = {
 
 	},
 
-	mergeSelectors: function (rules, mergedCSSObj, mergedCSSObjRules, selectors, mediaSelectors) {
+	mergeSelectors: function (rules, mergedCSSObj, mergedCSSObjRules, selectors, m) {
 		var removePos = [];
 
 		for (var selector in selectors) {
 			if (selectors[selector].length > 1) {
 
-				var last, rl, lDec = [],
+				var sel, last, media, rl, mrSel, mrLast,
+					lDec = [],
 					lDecImp = [];
 				selectors[selector] = _.uniq(selectors[selector]);
 
 				for (var i = 0; i < selectors[selector].length; i++) {
-					var sel = selectors[selector][i];
+					sel = m ? selectors[selector][i].rule : selectors[selector][i];
+					if (m) media = selectors[selector][i].media;
+
+					mrSel = m ? mergedCSSObjRules[media].rules[sel] : mergedCSSObjRules[sel];
 
 					if (i === 0) {
-						last = selectors[selector][selectors[selector].length - 1];
-						rl = rules[last];
+						last = m ? selectors[selector][selectors[selector].length - 1].rule : selectors[selector][selectors[selector].length - 1];
+						mrLast = m ? mergedCSSObjRules[media].rules[last] : mergedCSSObjRules[last];
+						rl = m ? rules[media].rules[last] : rules[last];
+
 						_.each(rl.declarations, function (d) {
 							lDec.push(d.property);
 						});
-						_.each(mergedCSSObjRules[last].declarations, function (d) {
+						_.each(mrLast.declarations, function (d) {
 							lDecImp.push(d.property);
 						});
 					}
 
 					if (i !== selectors[selector].length - 1) {
 
-						var rs = rules[sel],
+
+						var rs = m ? rules[media].rules[sel] : rules[sel],
 							sDec = [],
 							important = [],
-							ldi, l, d = mergedCSSObjRules[sel].declarations,
+							ldi, l, d = mrSel.declarations,
 							j = d.length - 1;
 
 						_.each(rs.declarations, function (dc) {
@@ -437,21 +447,22 @@ var csss = {
 
 								//keep !important and remove remaining duplicate properties
 								if (important.length > 0) {
-									mergedCSSObjRules[sel].declarations = _.intersection(d, important);
+									mrSel.declarations = _.intersection(d, important);
 
 									for (l = important.length - 1; l >= 0; l--) {
 										if (lDec.indexOf(important[l].property) >= 0) {
-											if (mergedCSSObjRules[last].declarations[l].type === 'declaration' && mergedCSSObjRules[last].declarations[l].value.indexOf('!important') >= 0) {
-												mergedCSSObjRules[sel].declarations.splice(l, 1);
+											if (mrLast.declarations[l].type === 'declaration' && mrLast.declarations[l].value.indexOf('!important') >= 0) {
+												mrSel.declarations.splice(l, 1);
 											} else {
-												mergedCSSObjRules[last].declarations.splice(l, 1);
+												mrLast.declarations.splice(l, 1);
 											}
 										}
 									}
 
 									mergedSelectors++;
 								} else {
-									removePos.push(sel);
+									if (m) removePos.push([media, sel]);
+									else removePos.push(sel);
 									mergedSelectors++;
 								}
 
@@ -473,10 +484,10 @@ var csss = {
 
 									for (l = important.length - 1; l >= 0; l--) {
 										if (lDec.indexOf(important[l].property) >= 0) {
-											if (mergedCSSObjRules[last].declarations[l].type === 'declaration' && mergedCSSObjRules[last].declarations[l].value.indexOf('!important') >= 0) {
-												mergedCSSObjRules[sel].declarations.splice(l, 1);
+											if (mrLast.declarations[l].type === 'declaration' && mrLast.declarations[l].value.indexOf('!important') >= 0) {
+												mrSel.declarations.splice(l, 1);
 											} else {
-												mergedCSSObjRules[last].declarations.splice(l, 1);
+												mrLast.declarations.splice(l, 1);
 											}
 										}
 									}
@@ -501,19 +512,20 @@ var csss = {
 
 									//keep !important and remove remaining duplicate properties
 									if (important.length > 0) {
-										mergedCSSObjRules[sel].declarations = _.intersection(d, important);
+										mrSel.declarations = _.intersection(d, important);
 
 										for (l = important.length - 1; l >= 0; l--) {
 											ldi = lDecImp.indexOf(important[l].property);
 											if (ldi >= 0) {
-												mergedCSSObjRules[last].declarations.splice(ldi, 1);
+												mrLast.declarations.splice(ldi, 1);
 												lDecImp.splice(ldi, 1);
 											}
 										}
 
 										mergedSelectors++;
 									} else {
-										removePos.push(sel);
+										if (m) removePos.push([media, sel]);
+										else removePos.push(sel);
 										mergedSelectors++;
 									}
 
@@ -525,17 +537,17 @@ var csss = {
 
 									if (important.length === 0) {
 										//no !important in properties
-										mergedCSSObjRules[sel].selectors = _.difference(mergedCSSObjRules[sel].selectors, mergedCSSObjRules[last].selectors);
+										mrSel.selectors = _.difference(mrSel.selectors, mrLast.selectors);
 										mergedSelectors++;
 									} else {
 										//has !important
 
-										if (mergedCSSObjRules[last].selectors.length === 1) {
+										if (mrLast.selectors.length === 1) {
 
 											for (l = important.length - 1; l >= 0; l--) {
 												ldi = lDecImp.indexOf(important[l].property);
 												if (ldi >= 0) {
-													mergedCSSObjRules[last].declarations.splice(ldi, 1);
+													mrLast.declarations.splice(ldi, 1);
 													lDecImp.splice(ldi, 1);
 												}
 											}
@@ -549,13 +561,13 @@ var csss = {
 								important = csss.getImportants(j, d);
 
 								if (important.length > 0) {
-									if (mergedCSSObjRules[last].selectors.length === 1) {
+									if (mrLast.selectors.length === 1) {
 
 										for (l = important.length - 1; l >= 0; l--) {
 											ldi = lDecImp.indexOf(important[l].property);
 											if (ldi >= 0) {
-												if (mergedCSSObjRules[last].declarations[l].type === 'declaration' && mergedCSSObjRules[last].declarations[l].value.indexOf('!important') < 0) {
-													mergedCSSObjRules[last].declarations.splice(ldi, 1);
+												if (mrLast.declarations[l].type === 'declaration' && mrLast.declarations[l].value.indexOf('!important') < 0) {
+													mrLast.declarations.splice(ldi, 1);
 													lDecImp.splice(ldi, 1);
 												}
 											}
@@ -584,6 +596,7 @@ var csss = {
 
 		return [mergedCSSObj, removePos];
 	},
+
 
 	cleanUpMergedCSS: function (obj) {
 		var mr = obj.stylesheet.rules;

@@ -380,13 +380,15 @@ var csss = {
 				resultMediaSelectors = csss.mergeSelectors(rules, mergedCSSObj, mergedCSSObjRules, mediaSelectors[media], true);
 				if (resultMediaSelectors[1].length > 0) removeSelectorsMedia.push(resultMediaSelectors[1]);
 			}
+			//remove duplicates and sort
+			removeSelectorsMedia = csss.getUniqueArrays(
+				_.sortBy(
+					_.sortBy(_.flatten(removeSelectorsMedia, true)),
+					function (item) {
+						return item[1];
+					}));
 
-			//remove duplicates
-			removeSelectorsMedia = csss.getUniqueArrays(_.sortBy(_.sortBy(removeSelectorsMedia), function (item, key) {
-				return item[1];
-			}));
-
-			removeSelectors = _.flatten(removeSelectors.concat(removeSelectorsMedia), true);
+			removeSelectors = removeSelectors.concat(removeSelectorsMedia);
 
 			//remove duplicate selectors from object
 			length = removeSelectors.length;
@@ -623,6 +625,14 @@ var csss = {
 			if (mr[c].type === 'rule') {
 				if (mr[c].selectors.length === 0 || mr[c].declarations.length === 0) {
 					mr.splice(c, 1);
+				}
+			} else if (mr[c].type === 'media') {
+				for (var m = mr[c].rules.length - 1; m >= 0; m--) {
+					if (mr[c].rules[m].type === 'rule') {
+						if (mr[c].rules[m].selectors.length === 0 || mr[c].rules[m].declarations.length === 0) {
+							mr[c].rules.splice(m, 1);
+						}
+					}
 				}
 			}
 		}

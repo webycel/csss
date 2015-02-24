@@ -342,6 +342,17 @@ var csss = {
 		consoleOutput += ('Saved size: ' + (saved / 1024).toFixed(3) + 'kb (' + p.toFixed(1) + '%)\n\r\n\r');
 	},
 
+	getUniqueArrays: function (arr) {
+		var hash = {},
+			result = [];
+		for (var i = 0, l = arr.length; i < l; ++i) {
+			if (!hash.hasOwnProperty(arr[i])) {
+				hash[arr[i]] = true;
+				result.push(arr[i]);
+			}
+		}
+		return result;
+	},
 
 
 	/*******
@@ -354,19 +365,28 @@ var csss = {
 			var rules = cssObj.stylesheet.rules,
 				mergedCSSObj = JSON.parse(JSON.stringify(cssObj)), //ewww! ugly copy
 				mergedCSSObjRules = mergedCSSObj.stylesheet.rules,
-				resultSelectors, resultMediaSelectors, media, i, j, length, length2, r, removeSelectors = [];
+				resultSelectors, resultMediaSelectors, media, i, j, length, length2, r,
+				removeSelectors = [],
+				removeSelectorsMedia = [];
 
 			mergedSelectors = 0;
 
 			/* merge multiple selectors OUTSIDE media queries */
 			resultSelectors = csss.mergeSelectors(rules, mergedCSSObj, mergedCSSObjRules, selectors, false);
-			removeSelectors = _.sortBy(_.uniq(resultSelectors[1]));
+			removeSelectors = _.uniq(_.sortBy(resultSelectors[1]), true);
 
 			/* merge multiple selectors INSIDE media queries */
 			for (media in mediaSelectors) {
 				resultMediaSelectors = csss.mergeSelectors(rules, mergedCSSObj, mergedCSSObjRules, mediaSelectors[media], true);
-				removeSelectors.push(_.sortBy(_.uniq(resultMediaSelectors[1])));
+				if (resultMediaSelectors[1].length > 0) removeSelectorsMedia.push(resultMediaSelectors[1]);
 			}
+
+			//remove duplicates
+			removeSelectorsMedia = csss.getUniqueArrays(_.sortBy(_.sortBy(removeSelectorsMedia), function (item, key) {
+				return item[1];
+			}));
+
+			removeSelectors = _.flatten(removeSelectors.concat(removeSelectorsMedia), true);
 
 			//remove duplicate selectors from object
 			length = removeSelectors.length;
@@ -374,10 +394,8 @@ var csss = {
 				for (i = length - 1; i >= 0; i--) {
 					length2 = removeSelectors[i].length;
 					if (length2 > 0) {
-						for (j = length2 - 1; j >= 0; j--) {
-							r = removeSelectors[i][j];
-							mergedCSSObj.stylesheet.rules[r[0]].rules.splice(r[1], 1);
-						}
+						r = removeSelectors[i];
+						mergedCSSObj.stylesheet.rules[r[0]].rules.splice(r[1], 1);
 					} else if (typeof length2 === 'undefined') {
 						mergedCSSObj.stylesheet.rules.splice(removeSelectors[i], 1);
 					}
@@ -500,6 +518,7 @@ var csss = {
 						} else if (rs.selectors.length > 1 || rl.selectors.length > 1) {
 							/* set of selectors 
 								.text, .title | .text */
+
 							if (_.isEqual(_.sortBy(sDec), _.sortBy(lDec))) {
 								//exact the same properties
 

@@ -434,6 +434,8 @@ var csss = {
 						mrLast = m ? mergedCSSObjRules[media].rules[last] : mergedCSSObjRules[last];
 						rl = m ? rules[media].rules[last] : rules[last];
 
+						if (typeof rl === 'undefined') break;
+
 						_.each(rl.declarations, function (d) {
 							lDec.push(d.property);
 						});
@@ -443,7 +445,6 @@ var csss = {
 					}
 
 					if (i !== selectors[selector].length - 1) {
-
 
 						var rs = m ? rules[media].rules[sel] : rules[sel],
 							sDec = [],

@@ -681,7 +681,7 @@ var csss = {
 program.version(pkg.version);
 
 program
-	.option('-m, --merge <newFileName>', 'merge all duplicate selectors into new file (still WIP!)');
+	.option('-m, --merge <newFileName>', 'merge all duplicate selectors into new file');
 
 program
 	.usage('[options]')

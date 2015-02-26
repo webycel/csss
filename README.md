@@ -6,7 +6,7 @@
 
 ![CSS Shampoo results example](/img/csss_logo.png?raw=true)
 
-CSSS is a tool that detects multiple CSS selectors from your stylesheets and it works across multiple files.
+CSSS is a tool that detects multiple CSS selectors from your stylesheets and it works across multiple files. You can also merge the duplicate selectors and as a result you will get a new clean CSS file.
 
 ##Introduction - why use shampoo?
 
@@ -31,11 +31,21 @@ Options:
   -h, --help                            output usage information
   -V, --version                         output the version number
   -f, --files <files>                   Specify stylesheets to process
+  -m, --merge <newFileName>             merge all duplicate selectors and save to new file
 ```
 You can pass local CSS files, a folder which contains CSS files or URLs.
 
-##Results example
+##Detect duplicate selectors: results example
 ![CSS Shampoo results example](/img/example-results.png?raw=true)
 
 You will get a list with all selectors which appear multiple times in your CSS file(s). The exact lines of the selector is shown and if you were searching through multiple files, you will also get the file name printed.
 You can also see the amount of shared properties of each same selector, which means some selectors have exactly the same properties or are overwriting already existing ones in the file.
+
+## Merge duplicate CSS selectors
+```
+Usage: e.g. csss -f /path/to/dirty.css -m newClean.css
+```
+Pass your CSS file(s) with the -f option and define the name of the new file which will contain the merged duplicate selectors. If it goes through successfully, it will create your newClean.css file with your cleaned up CSS.
+
+Here is a simple merging example, both .text selectors will be combined into one
+![CSS Shampoo results example](/img/merge-simple.png?raw=true)

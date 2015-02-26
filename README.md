@@ -4,6 +4,8 @@
 
 # CSS Shampoo
 
+![CSS Shampoo results example](/img/csss_logo.png?raw=true)
+
 CSSS is a tool that detects multiple CSS selectors from your stylesheets and it works across multiple files.
 
 ##Introduction - why use shampoo?

@@ -39,7 +39,6 @@ var csss = {
 					return csss.parseCss(_.flatten(rawCSS));
 				}).then(csss.detectDuplicateSelectors).then(function (response) {
 					if (program.merge) {
-						//csss.printMultipleSelectors(response[0][0], response[0][1], response[0][2]);
 						csss.mergeCSS(response[0][0], response[0][1], response[0][2]).then(csss.saveMergedFile);
 					} else {
 						csss.printMultipleSelectors(response[0][0], response[0][1], response[0][2]).then(function (results) {
@@ -434,7 +433,7 @@ var csss = {
 						mrLast = m ? mergedCSSObjRules[media].rules[last] : mergedCSSObjRules[last];
 						rl = m ? rules[media].rules[last] : rules[last];
 
-						if (typeof rl === 'undefined' || typeof mrLast === 'undefined') break;
+						if (typeof rl === 'undefined' || typeof mrLast === 'undefined' || rl.type === 'comment') break;
 
 						_.each(rl.declarations, function (d) {
 							lDec.push(d.property);

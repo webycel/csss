@@ -235,39 +235,30 @@ var csss = {
 
 			var rules = cssObj.stylesheet.rules,
 				declarations = {},
-				i, d, j, sel, media, pos;
+				i, d, j, sel, media, pos, sameFile;
 
 			/* print multiple selectors outside media queries */
 			for (sel in selectors) {
 				if (selectors[sel].length > 1) {
-					consoleOutput += ((('DUPLICATE: ').bold + sel).red) + '\n\r';
+
 					declarations = {};
-					for (i in selectors[sel]) {
-						d = rules[selectors[sel][i]].declarations;
+					sameFile = true;
 
-						for (j in d) {
-							if (declarations[d[j].property] == null) {
-								declarations[d[j].property] = 0;
+					//check if duplicates in different files for --diff
+					if(program.diff) {
+						for (i in selectors[sel]) {
+							if(i > 0 && rules[selectors[sel][i]].position.source !== rules[selectors[sel][i - 1]].position.source) {
+								sameFile = false;
 							}
-							declarations[d[j].property] ++;
 						}
-
-						csss.printMultipleSelectorsLine(rules[selectors[sel][i]].position);
-						duplicateSelectors++;
 					}
-					csss.printSharingProperties(declarations);
-				}
-			}
 
-			/* print multiple selectors outside media queries */
-			for (media in mediaSelectors) {
-				for (sel in mediaSelectors[media]) {
-					if (mediaSelectors[media][sel].length > 1) {
-						consoleOutput += ((('DUPLICATE: ').bold + sel).red + (' @media ' + media).blue) + '\n\r';
-						declarations = {};
-						for (i in mediaSelectors[media][sel]) {
-							pos = mediaSelectors[media][sel][i];
-							d = rules[pos.media].rules[pos.rule].declarations;
+					if(!program.diff || !sameFile) {
+
+						consoleOutput += ((('DUPLICATE: ').bold + sel).red) + '\n\r';
+
+						for (i in selectors[sel]) {
+							d = rules[selectors[sel][i]].declarations;
 
 							for (j in d) {
 								if (declarations[d[j].property] == null) {
@@ -276,10 +267,58 @@ var csss = {
 								declarations[d[j].property] ++;
 							}
 
-							csss.printMultipleSelectorsLine(rules[pos.media].rules[pos.rule].position);
+							csss.printMultipleSelectorsLine(rules[selectors[sel][i]].position);
 							duplicateSelectors++;
 						}
+
 						csss.printSharingProperties(declarations);
+
+					}
+				}
+			}
+
+			/* print multiple selectors outside media queries */
+			for (media in mediaSelectors) {
+				for (sel in mediaSelectors[media]) {
+					if (mediaSelectors[media][sel].length > 1) {
+
+						declarations = {};
+						sameFile = true;
+
+						//check if duplicates in different files for --diff
+						if(program.diff) {
+							for (i in mediaSelectors[media][sel]) {
+								if(i > 0) { 
+									pos = mediaSelectors[media][sel][i];
+									pos2 = mediaSelectors[media][sel][i-1];
+									if(rules[pos.media].rules[pos.rule].position.source !== rules[pos2.media].rules[pos2.rule].position.source) {
+										sameFile = false;
+									}
+								}
+							}
+						}
+
+						if(!program.diff || !sameFile) {
+
+							consoleOutput += ((('DUPLICATE: ').bold + sel).red + (' @media ' + media).blue) + '\n\r';
+							for (i in mediaSelectors[media][sel]) {
+								pos = mediaSelectors[media][sel][i];
+								d = rules[pos.media].rules[pos.rule].declarations;
+
+								for (j in d) {
+									if (declarations[d[j].property] == null) {
+										declarations[d[j].property] = 0;
+									}
+									declarations[d[j].property] ++;
+								}
+
+								csss.printMultipleSelectorsLine(rules[pos.media].rules[pos.rule].position);
+								duplicateSelectors++;
+							}
+							csss.printSharingProperties(declarations);
+
+						}
+
 					}
 				}
 			}
@@ -322,7 +361,10 @@ var csss = {
 
 	printHead: function () {
 		consoleOutput += (('CSSS START\n\r\n\r').rainbow.inverse);
-		consoleOutput += (('Looking for muliple selectors in\n\r').underline);
+
+		if(!program.diff) consoleOutput += (('Looking for muliple selectors in\n\r').underline);
+		else consoleOutput += (('Looking for muliple selectors between (diff)\n\r').underline);
+
 		consoleOutput += (inputFiles.toString().replace(/,/g, '\n').blue) + '\n\r\n\r';
 	},
 
@@ -682,6 +724,9 @@ program.version(pkg.version);
 
 program
 	.option('-m, --merge <newFileName>', 'merge all duplicate selectors and save to new file');
+
+program
+	.option('-d, --diff', 'get duplicate selectors between files');
 
 program
 	.usage('[options]')

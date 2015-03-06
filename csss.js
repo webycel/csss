@@ -245,15 +245,15 @@ var csss = {
 					sameFile = true;
 
 					//check if duplicates in different files for --diff
-					if(program.diff) {
+					if (program.diff) {
 						for (i in selectors[sel]) {
-							if(i > 0 && rules[selectors[sel][i]].position.source !== rules[selectors[sel][i - 1]].position.source) {
+							if (i > 0 && rules[selectors[sel][i]].position.source !== rules[selectors[sel][i - 1]].position.source) {
 								sameFile = false;
 							}
 						}
 					}
 
-					if(!program.diff || !sameFile) {
+					if (!program.diff || !sameFile) {
 
 						consoleOutput += ((('DUPLICATE: ').bold + sel).red) + '\n\r';
 
@@ -286,19 +286,19 @@ var csss = {
 						sameFile = true;
 
 						//check if duplicates in different files for --diff
-						if(program.diff) {
+						if (program.diff) {
 							for (i in mediaSelectors[media][sel]) {
-								if(i > 0) { 
+								if (i > 0) {
 									pos = mediaSelectors[media][sel][i];
-									pos2 = mediaSelectors[media][sel][i-1];
-									if(rules[pos.media].rules[pos.rule].position.source !== rules[pos2.media].rules[pos2.rule].position.source) {
+									pos2 = mediaSelectors[media][sel][i - 1];
+									if (rules[pos.media].rules[pos.rule].position.source !== rules[pos2.media].rules[pos2.rule].position.source) {
 										sameFile = false;
 									}
 								}
 							}
 						}
 
-						if(!program.diff || !sameFile) {
+						if (!program.diff || !sameFile) {
 
 							consoleOutput += ((('DUPLICATE: ').bold + sel).red + (' @media ' + media).blue) + '\n\r';
 							for (i in mediaSelectors[media][sel]) {
@@ -362,7 +362,7 @@ var csss = {
 	printHead: function () {
 		consoleOutput += (('CSSS START\n\r\n\r').rainbow.inverse);
 
-		if(!program.diff) consoleOutput += (('Looking for muliple selectors in\n\r').underline);
+		if (!program.diff) consoleOutput += (('Looking for muliple selectors in\n\r').underline);
 		else consoleOutput += (('Looking for muliple selectors between (diff)\n\r').underline);
 
 		consoleOutput += (inputFiles.toString().replace(/,/g, '\n').blue) + '\n\r\n\r';

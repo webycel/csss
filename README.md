@@ -49,3 +49,5 @@ Pass your CSS file(s) with the -f option and define the name of the new file whi
 
 Here is a simple merging example, both .text selectors will be combined into one
 ![CSS Shampoo results example](/img/merge-simple.png?raw=true)
+
+<i>Many different scenarios of possible duplicate selectors are being considered in order to keep your CSS working and not break any layout, some examples will be published soon.</i>

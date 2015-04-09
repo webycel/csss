@@ -421,6 +421,7 @@ var csss = {
 				resultMediaSelectors = csss.mergeSelectors(rules, mergedCSSObj, mergedCSSObjRules, mediaSelectors[media], true);
 				if (resultMediaSelectors[1].length > 0) removeSelectorsMedia.push(resultMediaSelectors[1]);
 			}
+
 			//remove duplicates and sort
 			removeSelectorsMedia = csss.getUniqueArrays(
 				_.sortBy(
@@ -459,21 +460,26 @@ var csss = {
 		for (var selector in selectors) {
 			if (selectors[selector].length > 1) {
 
-				var sel, last, media, rl, mrSel, mrLast,
+				var sel, last, media, mediaLast, rl, mrSel, mrLast, slenght,
 					lDec = [],
 					lDecImp = [];
-				selectors[selector] = _.uniq(selectors[selector]);
 
-				for (var i = 0; i < selectors[selector].length; i++) {
+				selectors[selector] = _.uniq(selectors[selector]);
+				slenght = selectors[selector].length;
+
+				for (var i = 0; i < slenght; i++) {
 					sel = m ? selectors[selector][i].rule : selectors[selector][i];
-					if (m) media = selectors[selector][i].media;
+					if (m) {
+						media = selectors[selector][i].media;
+						mediaLast = selectors[selector][slenght - 1].media;
+					}
 
 					mrSel = m ? mergedCSSObjRules[media].rules[sel] : mergedCSSObjRules[sel];
 
 					if (i === 0) {
 						last = m ? selectors[selector][selectors[selector].length - 1].rule : selectors[selector][selectors[selector].length - 1];
-						mrLast = m ? mergedCSSObjRules[media].rules[last] : mergedCSSObjRules[last];
-						rl = m ? rules[media].rules[last] : rules[last];
+						mrLast = m ? mergedCSSObjRules[mediaLast].rules[last] : mergedCSSObjRules[last];
+						rl = m ? rules[mediaLast].rules[last] : rules[last];
 
 						if (typeof rl === 'undefined' || typeof mrLast === 'undefined' || rl.type === 'comment') break;
 

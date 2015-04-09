@@ -1,46 +1,45 @@
 {
-  "name": "csss",
-  "version": "1.1.0",
-  "description": "A tool to detect multiple CSS selectors from your stylesheets and it works across multiple files.",
-  "author": "Anthony Weber",
-  "license": "ISC",
-  "homepage": "https://github.com/webycel/csss",
-  "bugs": {
-    "url": "https://github.com/webycel/csss/issues"
-  },
-  "scripts": {
-    "start": "node index.js",
-    "test": "mocha"
-  },
-  "keywords": [
-    "optimize",
-    "optimise",
-    "multiple",
-    "selector",
-    "CSS"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/webycel/csss.git"
-  },
-  "preferGlobal": true,
-  "main": "csss",
-  "bin": {
-    "csss": "./csss.js"
-  },
-  "readmeFilename": "Readme.md",
-  "engines": {
-    "node": ">= 0.10.x"
-  },
-  "dependencies": {
-    "bluebird": "^2.8.1",
-    "colors": "^1.0.3",
-    "commander": "^2.6.0",
-    "css": "^2.1.0",
-    "express": "^4.12.2",
-    "mocha": "^2.1.0",
-    "request": "^2.52.0",
-    "request-promise": "^0.4.0",
-    "underscore": "^1.7.0"
-  }
+	"name": "csss",
+	"version": "1.1.1",
+	"description": "A tool to detect multiple CSS selectors from your stylesheets and it works across multiple files.",
+	"author": "Anthony Weber",
+	"license": "ISC",
+	"homepage": "https://github.com/webycel/csss",
+	"bugs": {
+		"url": "https://github.com/webycel/csss/issues"
+	},
+	"scripts": {
+		"start": "node index.js",
+		"test": "mocha"
+	},
+	"keywords": [
+		"optimize",
+		"optimise",
+		"multiple",
+		"selector",
+		"CSS"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/webycel/csss.git"
+	},
+	"preferGlobal": true,
+	"main": "csss",
+	"bin": {
+		"csss": "./csss.js"
+	},
+	"readmeFilename": "Readme.md",
+	"engines": {
+		"node": ">= 0.10.x"
+	},
+	"dependencies": {
+		"commander": "^2.6.0",
+		"css": "^2.1.0",
+		"bluebird": "^2.8.1",
+		"colors": "^1.0.3",
+		"request": "^2.52.0",
+		"underscore": "^1.7.0",
+		"request-promise": "^0.4.0",
+		"mocha": "^2.1.0"
+	}
 }

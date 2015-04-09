@@ -1,6 +1,6 @@
 *.DS_Store
 .npmignore
-
+.idea/
 style
 node_modules
 doc

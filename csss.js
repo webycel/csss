@@ -15,7 +15,8 @@ var inputFiles,
 	duplicateSelectors = 0,
 	mergedSelectors = 0,
 	consoleOutput,
-	originalCSS;
+	originalCSS,
+	originalCSSObj = [];
 
 
 var csss = {
@@ -33,6 +34,14 @@ var csss = {
 			duplicateSelectors = 0;
 			consoleOutput = '';
 
+			if (program.remove) {
+				if (inputFiles.length > 1) {
+					console.log(('Currently only one file as a parameter for this option is supported. Sorry :(').red);
+					return false;
+				}
+				inputFiles.push(program.remove);
+			}
+
 			csss.getCSSFiles(inputFiles)
 				.then(function (rawCSS) {
 					inputFiles = _.flatten(inputFiles);
@@ -40,6 +49,8 @@ var csss = {
 				}).then(csss.detectDuplicateSelectors).then(function (response) {
 					if (program.merge) {
 						csss.mergeCSS(response[0][0], response[0][1], response[0][2]).then(csss.saveMergedFile);
+					} else if (program.remove) {
+						csss.removeDuplicates(response[0][0], response[0][1], response[0][2]);
 					} else {
 						csss.printMultipleSelectors(response[0][0], response[0][1], response[0][2]).then(function (results) {
 							console.log(results[0]);
@@ -146,12 +157,15 @@ var csss = {
 			var obj = css.parse(rawCSS[0], {
 				source: inputFiles[0]
 			});
+			originalCSSObj.push(obj);
 
 			//parse the remaining css files and merge the rules to the existing obj
 			for (var i = 1; i < rawCSS.length; i++) {
 				var o = css.parse(rawCSS[i], {
 					source: inputFiles[i]
 				});
+				originalCSSObj.push(o);
+
 				for (var j = 0; j < o.stylesheet.rules.length; j++) {
 					obj.stylesheet.rules[obj.stylesheet.rules.length] = o.stylesheet.rules[j];
 				}
@@ -715,6 +729,77 @@ var csss = {
 		csss.printFooter();
 
 		return consoleOutput;
+	},
+
+
+
+	/*******
+	    REMOVE DUPLICATE SELECTORS
+	********/
+	removeDuplicates: function (cssObj, selectors, mediaSelectors) {
+
+		var cssPromise = promise.map([0], function (x, index) {
+
+			var rules = cssObj.stylesheet.rules,
+				mergedCSSObj = JSON.parse(JSON.stringify(cssObj)), //ewww! ugly copy
+				mergedCSSObjRules = mergedCSSObj.stylesheet.rules,
+				resultSelectors, resultMediaSelectors, media, i, j, length, length2, r,
+				removePos = [],
+				removeSelectors = [],
+				removeSelectorsMedia = [],
+				optFile = originalCSSObj[inputFiles.indexOf(program.remove)];
+
+			for (var sel in selectors) {
+				if (selectors[sel].length > 1) {
+
+					for (var s in selectors[sel]) {
+						if (s > 0) {
+							var d = rules[selectors[sel][s]],
+								dprev = rules[selectors[sel][s - 1]];
+
+							//console.log(rules[selectors[sel][s]]);
+							if (d.position.source !== dprev.position.source) {
+								removePos.push(d.position.source === inputFiles[0] ? selectors[sel][s] : selectors[sel][s - 1]);
+							}
+						}
+					}
+				}
+			}
+
+			/*
+			//remove duplicates and sort
+			removeSelectorsMedia = csss.getUniqueArrays(
+				_.sortBy(
+					_.sortBy(_.flatten(removeSelectorsMedia, true)),
+					function (item) {
+						return item[1];
+					}));
+
+			removeSelectors = removeSelectors.concat(removeSelectorsMedia);
+
+			//remove duplicate selectors from object
+			length = removeSelectors.length;
+			if (length > 0) {
+				for (i = length - 1; i >= 0; i--) {
+					length2 = removeSelectors[i].length;
+					if (length2 > 0) {
+						r = removeSelectors[i];
+						mergedCSSObj.stylesheet.rules[r[0]].rules.splice(r[1], 1);
+					} else if (typeof length2 === 'undefined') {
+						mergedCSSObj.stylesheet.rules.splice(removeSelectors[i], 1);
+					}
+				}
+			}
+			*/
+
+
+			return;
+			//return csss.cleanUpMergedCSS(mergedCSSObj);
+
+		});
+
+		return promise.resolve(cssPromise);
+
 	}
 
 };
@@ -727,6 +812,9 @@ program
 
 program
 	.option('-d, --diff', 'get duplicate selectors between files');
+
+program
+	.option('-r, --remove <removeFromFile>', 'remove duplicate selectors from -f and merge into -r file');
 
 program
 	.usage('[options]')

@@ -460,12 +460,12 @@ var csss = {
 		for (var selector in selectors) {
 			if (selectors[selector].length > 1) {
 
-				var sel, last, media, mediaLast, rl, mrSel, mrLast,
+				var sel, last, media, mediaLast, rl, mrSel, mrLast, slenght,
 					lDec = [],
 					lDecImp = [];
 
 				selectors[selector] = _.uniq(selectors[selector]);
-				slenght = selectors[selector].length
+				slenght = selectors[selector].length;
 
 				for (var i = 0; i < slenght; i++) {
 					sel = m ? selectors[selector][i].rule : selectors[selector][i];
